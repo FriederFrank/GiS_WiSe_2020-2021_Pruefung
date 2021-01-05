@@ -37,7 +37,7 @@ async function login(): Promise<void> {
         }
         else if (statusCode == StatusCodes.Good) {
             text.innerText = "Passwort korrekt!";
-            window.location.href = "/index.html";
+            window.location.href = "/GiS_WiSe_2020-2021_Pruefung/html/index.html";
         }
     }
 
