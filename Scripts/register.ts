@@ -35,6 +35,7 @@ async function register(): Promise<void> {
         }
         else if (statusCode == StatusCodes.Good) {
             text.innerText = "Erfolgreich registriert!";
+            window.location.href = "/GiS_WiSe_2020-2021_Pruefung/html/login.html";
         }
         else if (statusCode == StatusCodes.BadDatabaseProblem) {
             text.innerText = "Unbekanntes Datenbank Problem";

@@ -27,6 +27,7 @@ async function register() {
         }
         else if (statusCode == 1 /* Good */) {
             text.innerText = "Erfolgreich registriert!";
+            window.location.href = "/GiS_WiSe_2020-2021_Pruefung/html/login.html";
         }
         else if (statusCode == 2 /* BadDatabaseProblem */) {
             text.innerText = "Unbekanntes Datenbank Problem";
