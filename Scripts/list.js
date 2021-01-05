@@ -14,8 +14,8 @@ async function getUsersFromServer() {
     for (const user of users) {
         let userDiv = document.createElement("div");
         let attributes = new Map();
-        attributes.set("First name:", user.name);
-        attributes.set("Last name:", user.surName);
+        attributes.set(user.surName, user.name);
+        /*attributes.set("Last name:", user.surName);
         /*attributes.set("E-Mail:", user.eMail);
         attributes.set("Adress:", user.adress);
         attributes.set("City:", user.city);
