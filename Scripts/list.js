@@ -16,11 +16,11 @@ async function getUsersFromServer() {
         let attributes = new Map();
         attributes.set("First name:", user.name);
         attributes.set("Last name:", user.surName);
-        attributes.set("E-Mail:", user.eMail);
+        /*attributes.set("E-Mail:", user.eMail);
         attributes.set("Adress:", user.adress);
         attributes.set("City:", user.city);
         attributes.set("Country:", user.country);
-        attributes.set("Postcode:", user.postcode);
+        attributes.set("Postcode:", user.postcode);   */
         // Do not create blank line for first user
         if (userCount != 0) {
             let brDiv = document.createElement("br");
