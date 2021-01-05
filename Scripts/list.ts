@@ -38,12 +38,12 @@ async function getUsersFromServer(): Promise<void> {
         // Create a div for each attribute
         for (const attribute of attributes) {        
             let nameDiv: HTMLDivElement = document.createElement("div");
-            let nameLabelDiv: HTMLDivElement = document.createElement("div");
-            nameLabelDiv.textContent = attribute[0];
+            /*let nameLabelDiv: HTMLDivElement = document.createElement("div");
+            nameLabelDiv.textContent = attribute[0];*/
             let nameValueDiv: HTMLDivElement = document.createElement("div");
             nameValueDiv.textContent = attribute[1];        
             
-            nameDiv.appendChild(nameLabelDiv);
+            /*nameDiv.appendChild(nameLabelDiv);*/
             nameDiv.appendChild(nameValueDiv);
             userDiv.appendChild(nameDiv);
         }
