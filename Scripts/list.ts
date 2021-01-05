@@ -21,8 +21,8 @@ async function getUsersFromServer(): Promise<void> {
         let userDiv: HTMLDivElement = document.createElement("div");  
         
         let attributes: Map<string, string> = new Map<string, string>();
-        attributes.set(user.surName, user.name);
-        /*attributes.set("Last name:", user.surName);
+        attributes.set("First name:", user.name);
+        attributes.set("Last name:", user.surName);
         /*attributes.set("E-Mail:", user.eMail);
         attributes.set("Adress:", user.adress);
         attributes.set("City:", user.city);
