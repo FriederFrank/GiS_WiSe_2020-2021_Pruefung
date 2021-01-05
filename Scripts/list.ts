@@ -44,7 +44,7 @@ async function getUsersFromServer(): Promise<void> {
             nameValueDiv.textContent = attribute[1];        
             
             /*nameDiv.appendChild(nameLabelDiv);*/
-            nameDiv.appendChild(nameValueDiv);
+            /*nameDiv.appendChild(nameValueDiv);*/
             userDiv.appendChild(nameDiv);
         }
           
