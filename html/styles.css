@@ -28,6 +28,7 @@ text-align: center;
   border-left: 1px solid#c4c4c4;
   text-align: center;
   color: #c4c4c4;
+  display: inline;
 }
 .Text { grid-area: Text; 
   border-top: 1px solid #c4c4c4;
