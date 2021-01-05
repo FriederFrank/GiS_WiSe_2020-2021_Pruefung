@@ -1,0 +1,105 @@
+html, body, .grid-container { height: 100%; margin: 0; }
+body{
+  font-family: Arial, Helvetica, sans-serif; 
+  border: none;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1600px;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0.5fr 2.3fr 0.2fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "Header"
+    "Login"
+    "Footer";
+}
+.Header { grid-area: Header; 
+  text-align: center;}
+.Login { grid-area: Login; 
+  text-align: center;
+  border-top: 1px solid #c4c4c4;
+  border-bottom: 1px solid #c4c4c4;
+}
+.Footer { grid-area: Footer; }
+
+.grid-container *:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+input[type=password], select, textarea {
+  width: 100%;
+  height: 100%;
+  padding: 0.75em;
+  border: 0.063em solid white;
+  background-color: #c4c4c4;
+  border-radius: 1em;
+  box-sizing: border-box;
+  margin-top: 0.25em;
+  margin-bottom: 0.625em;
+  resize: none;
+  overflow: hidden;
+  text-align: center;
+  font-size: 1em;
+  
+}
+  
+input[type=text], select, textarea {
+  width: 100%;
+  height: 100%;
+  padding: 0.75em;
+  border: 0.063em solid white;
+  background-color: #c4c4c4;
+  border-radius: 1em;
+  box-sizing: border-box;
+  margin-top: 0.25em;
+  margin-bottom: 0.625em;
+  resize: none;
+  overflow: hidden;
+  text-align: center;
+  font-size: 1em;
+  
+}
+  
+  input[type=button] {
+    background-color: #2ec3ef;
+    color: white;
+    padding: 0.75em 3em;
+    border: 0.063em solid #ccc;
+    border-radius: 1em;
+    cursor: pointer;
+    text-align: center;
+    font-size: 1.5em;
+  }
+  
+  input[type=button]:hover {
+    background-color: #f1f1f1;
+    color: black;
+  }
+  .form {
+    border-radius: 0.313em;
+    padding: 10%;
+    text-align: center;
+  }
+  h1{
+    text-align: left;
+    text-decoration: wavy;
+    color:#2ec3ef;
+    font-size: 1.5em;
+    padding: 1%;
+  }
+  h2{
+    text-align: center;
+    text-decoration: wavy;
+    color:#2ec3ef;
+    font-size: 1.5em;
+    padding: 1%;
+  }
+  .img-header{
+width: 40%;
+
+height: auto;
+  }

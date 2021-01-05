@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="./js/shared.js" defer></script>
+  <script src="./js/login.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="initial-scale=1.0">
+  <link href="styles-login.css" rel="stylesheet">
+  <title>Login</title>
+</head>
+
+<body>
+  <div class="grid-container">
+    <div class="Header">
+      <img src="../Bilder/336.png" class="img-header">
+    </div>
+    <div class="Login">
+      <div class="form">
+        <form> 
+          <input type="text" id="eMail" name="eMail" placeholder="E-Mail">
+          <input type="password" id="password" name="password" placeholder="Passwort">
+          <input type="button" value="Login" id="login">
+        </form>
+      </div>
+        <div id="serverresult">
+        </div>
+        <p>Noch keinen Account? Hier gehts zur <a href="register.html">Registrierung</a></p>
+    </div>
+    <div class="Footer"></div>
+  </div>
+
+</body>
+
+</html>

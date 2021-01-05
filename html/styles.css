@@ -1,0 +1,121 @@
+html, body, .grid-container { height: 100%; margin: 0; }
+body{
+  font-family: Arial, Helvetica, sans-serif; 
+  border: none;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1600px;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: 2.2fr 0.8fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1.7fr 0.3fr;
+  /*gap: 0.5em 0px;*/
+  grid-template-areas:
+    "Header Header"
+    "Text People"
+    "Feed People"
+    "Feed People"
+    "Feed People"
+    "Feed People"
+    "Footer Footer";
+}
+.Header { grid-area: Header; 
+text-align: center;
+}
+.People { grid-area: People; 
+  border-top: 1px solid#c4c4c4;
+  border-left: 1px solid#c4c4c4;
+}
+.Text { grid-area: Text; 
+  border-top: 1px solid #c4c4c4;
+  border-bottom: 1px solid #c4c4c4;
+  ;
+}
+.Footer { grid-area: Footer; 
+text-align: left;
+font-size: 1em;
+height: fit-content;}
+.Feed { grid-area: Feed; 
+
+}
+
+
+
+.grid-container *:after {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+input[type=text], select, textarea {
+  width: 100%;
+  height: 100%;
+  padding: 4em;
+  border: 0.063em solid white;
+  border-radius: 1em;
+  box-sizing: border-box;
+  margin-top: 0.25em;
+  margin-bottom: 0.625em;
+  resize: none;
+  overflow: hidden;
+  text-align: center;
+  background-color: #c4c4c4;
+  font-size: 1em;
+  font-family: Arial, Helvetica, sans-serif; 
+  
+}
+  
+  input[type=button] {
+    background-color: #2ec3ef;
+    color: white;
+    padding: 0.75em 5em;
+    border: 0.063em solid #ccc;
+    border-radius: 1em;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  
+  input[type=button]:hover {
+    background-color: #f1f1f1;
+    color: black;
+  }
+  .button{
+  background-color: #c4c4c4;
+  color: white;
+  padding: 0.4em 2em;
+  border: 0.063em solid #ccc;
+  border-radius: 1em;
+  cursor: pointer;
+  font-size: 0.75em;
+  text-decoration: none;
+}
+.button:hover{
+background-color: #f1f1f1;
+color: black;
+text-decoration: none;
+}
+
+  .form {
+    border-radius: 0.313em;
+    padding: 0.75em;
+  }
+  h1{
+    text-align: left;
+    text-decoration: wavy;
+    color:#2ec3ef;
+    font-size: 1.5em;
+    padding: 1%;
+  }
+  h2{
+    text-align: center;
+    text-decoration: wavy;
+    color:#2ec3ef;
+    font-size: 1.5em;
+    padding: 1%;
+  }
+  .img-header{
+width: 40%;
+
+height: auto;
+  }
