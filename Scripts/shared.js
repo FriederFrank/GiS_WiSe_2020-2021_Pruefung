@@ -2,7 +2,7 @@
 /**
  * Server url
  */
-const url = "https://gis-wise-2020-2021-pruefung.herokuapp.com//";
+const url = "https://gis-wise-2020-2021-pruefung.herokuapp.com/";
 /**
  * User class
  */
