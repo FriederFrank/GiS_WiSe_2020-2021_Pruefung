@@ -37,6 +37,7 @@ async function login(): Promise<void> {
         }
         else if (statusCode == StatusCodes.Good) {
             text.innerText = "Passwort korrekt!";
+            window.location.href = "/index.html";
         }
     }
 

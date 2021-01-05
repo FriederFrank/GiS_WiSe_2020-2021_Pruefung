@@ -28,6 +28,7 @@ async function login() {
         }
         else if (statusCode == 1 /* Good */) {
             text.innerText = "Passwort korrekt!";
+            window.location.href = "/index.html";
         }
     }
     // Show message to user
