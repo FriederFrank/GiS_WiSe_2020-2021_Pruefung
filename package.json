@@ -1,0 +1,25 @@
+{
+    "name": "gis-wise-2020-2021_pruefung",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.js",
+    "dependencies": {
+        "@types/mongodb": "^3.6.3",
+        "mongodb": "^3.6.3"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node server/server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/FriederFrank/GiS_WiSe_2020-2021_Pruefung.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/FriederFrank/GiS_WiSe_2020-2021_Pruefung/issues"
+    },
+    "homepage": "https://github.com/FriederFrank/GiS_WiSe_2020-2021_Pruefung#readme"
+}
