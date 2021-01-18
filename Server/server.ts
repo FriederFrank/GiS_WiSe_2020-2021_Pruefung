@@ -219,8 +219,6 @@ export namespace Server {
                  return StatusCodes.BadDatabaseProblem;
              }
         }
-
-        return -1;
     }
 
     /**
