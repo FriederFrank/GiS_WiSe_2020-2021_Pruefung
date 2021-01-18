@@ -14,6 +14,9 @@ async function login(): Promise<void> {
     // Get the form content and prepare the http request
     let formData: FormData = new FormData(document.forms[0]);
     let query: URLSearchParams = new URLSearchParams(<any>formData);
+    var currentUser: string = query.get("eMail");
+    var currentPassword: string = query.get("password");
+
     let queryUrl: string = url + "login" + "?" + query.toString();
     
     // Fetch the response
@@ -37,6 +40,10 @@ async function login(): Promise<void> {
         }
         else if (statusCode == StatusCodes.Good) {
             text.innerText = "Passwort korrekt!";
+
+            localStorage.setItem("currentUser", currentUser);
+            localStorage.setItem("currentPassword", currentPassword);
+
             window.location.href = "/GiS_WiSe_2020-2021_Pruefung/html/index.html";
         }
     }

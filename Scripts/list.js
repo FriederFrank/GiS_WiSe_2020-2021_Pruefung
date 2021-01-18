@@ -1,4 +1,41 @@
 "use strict";
+async function onUserClick(mouseEvent) {
+    let currentTarget = mouseEvent.currentTarget;
+    // Get Current User from LocalStorage
+    let currentUser = localStorage.getItem("currentUser");
+    // Get the form content and prepare the http request
+    let query = new URLSearchParams();
+    query.append("subscriber", currentUser);
+    query.append("subscriptionTarget", currentTarget.id);
+    let queryUrl = url + "subscribe" + "?" + query.toString();
+    // Fetch the response
+    let response = await fetch(queryUrl);
+    let text = document.createElement("p");
+    if (response.status != 200) {
+        // Server Error
+        text.innerText = "Unbekannter Server Fehler!";
+    }
+    else {
+        // Get return value
+        let responseText = await response.text();
+        let statusCode = Number.parseInt(responseText);
+        // Interpret return value
+        if (statusCode == 5 /* AlreadySubscribed */) {
+            text.innerText = "User bereits abonniert!";
+        }
+        else if (statusCode == 1 /* Good */) {
+            text.innerText = "Erfolgreich registriert!";
+        }
+        else if (statusCode == 2 /* BadDatabaseProblem */) {
+            text.innerText = "Unbekanntes Datenbank Problem";
+        }
+    }
+    let serverResult = document.getElementById("serverresult");
+    while (serverResult.hasChildNodes()) {
+        serverResult.removeChild(serverResult.firstChild);
+    }
+    serverResult.appendChild(text);
+}
 /**
  * Gets the users from the server
  */
@@ -9,37 +46,17 @@ async function getUsersFromServer() {
     let users = await response.json();
     // Get the "users" div
     let usersDiv = document.getElementById("users");
-    var userCount = 0;
     // For each user
     for (const user of users) {
         let userDiv = document.createElement("div");
-        let attributes = new Map();
-        attributes.set("First name:", user.name);
-        attributes.set("Last name:", user.surName);
-        /*attributes.set("E-Mail:", user.eMail);
-        attributes.set("Adress:", user.adress);
-        attributes.set("City:", user.city);
-        attributes.set("Country:", user.country);
-        attributes.set("Postcode:", user.postcode);   */
-        // Do not create blank line for first user
-        if (userCount != 0) {
-            let brDiv = document.createElement("br");
-            userDiv.appendChild(brDiv);
-        }
-        // Create a div for each attribute
-        for (const attribute of attributes) {
-            let nameDiv = document.createElement("div");
-            /*let nameLabelDiv: HTMLDivElement = document.createElement("div");
-            nameLabelDiv.textContent = attribute[0];*/
-            let nameValueDiv = document.createElement("div");
-            nameValueDiv.textContent = attribute[1];
-            /*nameDiv.appendChild(nameLabelDiv);*/
-            nameDiv.appendChild(nameValueDiv);
-            userDiv.appendChild(nameDiv);
-        }
+        userDiv.id = user.eMail;
+        userDiv.setAttribute("class", "user");
+        let nameDiv = document.createElement("div");
+        nameDiv.textContent = user.name + " " + user.surName;
+        userDiv.appendChild(nameDiv);
+        userDiv.addEventListener("click", onUserClick);
         // Add user to userDiv
         usersDiv.appendChild(userDiv);
-        userCount++;
     }
 }
 getUsersFromServer();

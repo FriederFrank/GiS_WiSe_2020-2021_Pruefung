@@ -47,11 +47,33 @@ class User {
 }
 
 /**
+ * Subscription class
+ */
+class Subscription {
+  subscriber: string;
+  subcsriptionTarget: string;
+
+  /**
+   * Ctor
+   * @param subscriber 
+   * @param subcsriptionTarget 
+   */
+  constructor(
+      subscriber: string,
+      subcsriptionTarget: string
+  ) {
+    this.subscriber = subscriber;
+    this.subcsriptionTarget = subcsriptionTarget;
+  }
+}
+
+/**
  * StatusCodes
  */
 const enum StatusCodes {
   Good = 1,
   BadDatabaseProblem = 2,
   BadEmailExists = 3,
-  BadWrongPassword = 4
+  BadWrongPassword = 4,
+  AlreadySubscribed = 5
 }

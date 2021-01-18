@@ -45,13 +45,35 @@ class User {
   }
 
 /**
+ * Subscription class
+ */
+class Subscription {
+    subscriber: string;
+    subcsriptionTarget: string;
+
+    /**
+     * Ctor
+     * @param subscriber 
+     * @param subcsriptionTarget 
+     */
+    constructor(
+        subscriber: string,
+        subcsriptionTarget: string,
+    ) {
+      this.subscriber = subscriber;
+      this.subcsriptionTarget = subcsriptionTarget;
+    }
+  }
+
+/**
  * Status codes
  */
 const enum StatusCodes {
     Good = 1,
     BadDatabaseProblem = 2,
     BadEmailExists = 3,
-    BadWrongPassword = 4
+    BadWrongPassword = 4,
+    AlreadySubscribed = 5
   }
 
 export namespace Server {
@@ -119,7 +141,7 @@ export namespace Server {
             // Write statuscode to response
             _response.write(String(loginResult));
         }
-        else if (q.pathname == "/register") {           
+        else if (q.pathname == "/register") {
             // Handle register command
             _response.setHeader("content-type", "text/html; charset=utf-8");
             
@@ -133,7 +155,7 @@ export namespace Server {
                 queryParameters.adress as string,
                 queryParameters.city as string,
                 queryParameters.postcode as string,
-                queryParameters.country as string              
+                queryParameters.country as string
             );    
             user.password = queryParameters.password as string;
  
@@ -153,6 +175,19 @@ export namespace Server {
             // Write users as json to response
             _response.write(JSON.stringify(users));
         }
+        else if (q.pathname == "/subscribe"){
+
+            _response.setHeader("content-type", "text/html; charset=utf-8");
+
+            // Create subscription object from query
+            var queryParameters: any = q.query;
+
+            
+            var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
+            var subscribeResult = subscribeUserToMongoDb(subscription);
+   
+            _response.write(String(subscribeResult));
+        }
         else {
             // Log unhandled paths
             console.log(_request.url);
@@ -160,6 +195,32 @@ export namespace Server {
 
         //End response
         _response.end();
+    }
+
+    async function subscribeUserToMongoDb(subscription: Subscription)
+    {
+        let subscriptions: Mongo.Collection = mongoClient.db("App").collection("Subscriptions");
+        var existingSubscription: number = await subscriptions.countDocuments({"subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget});
+   
+        if (existingSubscription > 0) {
+            // User with email already exists in db
+            return StatusCodes.AlreadySubscribed;
+        }
+        else{
+             // Insert subscription in database
+             var result: Mongo.InsertOneWriteOpResult<any> = await subscriptions.insertOne(subscription);
+        
+             if (result.insertedCount == 1) {
+                 // User successfully added
+                 return StatusCodes.Good;
+             }
+             else {
+                 // Database problem
+                 return StatusCodes.BadDatabaseProblem;
+             }
+        }
+
+        return -1;
     }
 
     /**

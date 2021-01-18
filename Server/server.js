@@ -29,7 +29,7 @@ class User {
     }
 }
 var Server;
-(function (Server) {
+(function(Server) {
     // Start the HTTP server
     console.log("Starting server");
     let port = Number(process.env.PORT);
@@ -78,8 +78,7 @@ var Server;
             var loginResult = await loginUserViaMongoDb(queryParameters.eMail, queryParameters.password);
             // Write statuscode to response
             _response.write(String(loginResult));
-        }
-        else if (q.pathname == "/register") {
+        } else if (q.pathname == "/register") {
             // Handle register command
             _response.setHeader("content-type", "text/html; charset=utf-8");
             // Create user object from query
@@ -90,16 +89,16 @@ var Server;
             var registerResult = await addUserToMongoDb(user);
             // Write statuscode to response
             _response.write(String(registerResult));
-        }
-        else if (q.pathname == "/list") {
+        } else if (q.pathname == "/list") {
             // Handle list command         
             _response.setHeader("content-type", "application/json; charset=utf-8");
             // Get users from database
             var users = await getUsersFromMongoDb();
             // Write users as json to response
             _response.write(JSON.stringify(users));
-        }
-        else {
+        } else if (q.pathname == "/subscribe") {
+
+        } else {
             // Log unhandled paths
             console.log(_request.url);
         }
@@ -116,18 +115,16 @@ var Server;
         var existingUserCount = await users.countDocuments({ "eMail": user.eMail });
         if (existingUserCount > 0) {
             // User with email already exists in db
-            return 3 /* BadEmailExists */;
-        }
-        else {
+            return 3 /* BadEmailExists */ ;
+        } else {
             // Insert user in database
             var result = await users.insertOne(user);
             if (result.insertedCount == 1) {
                 // User successfully added
-                return 1 /* Good */;
-            }
-            else {
+                return 1 /* Good */ ;
+            } else {
                 // Database problem
-                return 2 /* BadDatabaseProblem */;
+                return 2 /* BadDatabaseProblem */ ;
             }
         }
     }
@@ -142,11 +139,10 @@ var Server;
         var existingUserCount = await users.countDocuments({ "eMail": eMail, "password": password });
         if (existingUserCount > 0) {
             // User successfully logged in
-            return 1 /* Good */;
-        }
-        else {
+            return 1 /* Good */ ;
+        } else {
             // No user with this email password combination
-            return 4 /* BadWrongPassword */;
+            return 4 /* BadWrongPassword */ ;
         }
     }
     /**

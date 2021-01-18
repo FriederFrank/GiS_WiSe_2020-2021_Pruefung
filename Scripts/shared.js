@@ -27,4 +27,18 @@ class User {
         this.country = country;
     }
 }
+/**
+ * Subscription class
+ */
+class Subscription {
+    /**
+     * Ctor
+     * @param subscriber
+     * @param subcsriptionTarget
+     */
+    constructor(subscriber, subcsriptionTarget) {
+        this.subscriber = subscriber;
+        this.subcsriptionTarget = subcsriptionTarget;
+    }
+}
 //# sourceMappingURL=shared.js.map

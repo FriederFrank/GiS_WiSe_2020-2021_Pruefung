@@ -1,5 +1,5 @@
 
-let registerbtn = document.getElementById("register");
+let registerbtn: HTMLElement = document.getElementById("register");
 registerbtn.addEventListener("click", register);
 
 let oldText: HTMLParagraphElement;
@@ -12,6 +12,9 @@ async function register(): Promise<void> {
     // Get the form content and prepare the http request
     let formData: FormData = new FormData(document.forms[0]);
     let query: URLSearchParams = new URLSearchParams(<any>formData);
+    var currentUser: string = query.get("eMail");
+    var currentPassword: string = query.get("password");
+
     let queryUrl: string = url + "register" + "?" + query.toString();
     
     // Fetch the response
@@ -35,6 +38,9 @@ async function register(): Promise<void> {
         }
         else if (statusCode == StatusCodes.Good) {
             text.innerText = "Erfolgreich registriert!";
+
+            localStorage.setItem("currentUser", currentUser);
+            localStorage.setItem("currentPassword", currentPassword);
         }
         else if (statusCode == StatusCodes.BadDatabaseProblem) {
             text.innerText = "Unbekanntes Datenbank Problem";

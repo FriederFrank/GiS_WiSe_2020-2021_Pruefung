@@ -1,9 +1,58 @@
 
+
+async function onUserClick(mouseEvent: MouseEvent): Promise<void> {
+
+
+    let currentTarget: Element = mouseEvent.currentTarget as Element;
+
+    // Get Current User from LocalStorage
+    let currentUser: string = localStorage.getItem("currentUser");
+
+    // Get the form content and prepare the http request
+    let query: URLSearchParams = new URLSearchParams();
+    query.append("subscriber", currentUser);
+    query.append("subscriptionTarget", currentTarget.id);
+    let queryUrl: string = url + "subscribe" + "?" + query.toString();
+
+    // Fetch the response
+    let response: Response = await fetch(queryUrl);
+
+    let text: HTMLParagraphElement = document.createElement("p");
+
+    if (response.status != 200) {
+        // Server Error
+        text.innerText = "Unbekannter Server Fehler!";
+    }
+    else {
+        // Get return value
+        let responseText: string = await response.text();
+        let statusCode: StatusCodes = Number.parseInt(responseText) as StatusCodes;
+
+        // Interpret return value
+        if (statusCode == StatusCodes.AlreadySubscribed) {
+            text.innerText = "User bereits abonniert!";
+        }
+        else if (statusCode == StatusCodes.Good) {
+            text.innerText = "Erfolgreich registriert!";
+        }
+        else if (statusCode == StatusCodes.BadDatabaseProblem) {
+            text.innerText = "Unbekanntes Datenbank Problem";
+        }
+    }
+
+    let serverResult: HTMLElement = document.getElementById("serverresult");
+    while (serverResult.hasChildNodes()) {
+        serverResult.removeChild(serverResult.firstChild);
+    }
+    serverResult.appendChild(text);
+}
+
+
 /**
  * Gets the users from the server
  */
 async function getUsersFromServer(): Promise<void> {
-    
+
     // Fetch data from server
     let response: Response = await fetch(url + "list");
 
@@ -12,45 +61,20 @@ async function getUsersFromServer(): Promise<void> {
 
     // Get the "users" div
     let usersDiv: HTMLElement = document.getElementById("users");
-    
-    var userCount: number = 0;
 
     // For each user
     for (const user of users) {
-        
-        let userDiv: HTMLDivElement = document.createElement("div");  
-        
-        let attributes: Map<string, string> = new Map<string, string>();
-        attributes.set("First name:", user.name);
-        attributes.set("Last name:", user.surName);
-        /*attributes.set("E-Mail:", user.eMail);
-        attributes.set("Adress:", user.adress);
-        attributes.set("City:", user.city);
-        attributes.set("Country:", user.country);
-        attributes.set("Postcode:", user.postcode);   */ 
-        
-        // Do not create blank line for first user
-        if (userCount != 0 ) {
-            let brDiv: HTMLBRElement = document.createElement("br");
-            userDiv.appendChild(brDiv);
-        }
 
-        // Create a div for each attribute
-        for (const attribute of attributes) {        
-            let nameDiv: HTMLDivElement = document.createElement("div");
-            /*let nameLabelDiv: HTMLDivElement = document.createElement("div");
-            nameLabelDiv.textContent = attribute[0];*/
-            let nameValueDiv: HTMLDivElement = document.createElement("div");
-            nameValueDiv.textContent = attribute[1];        
-            
-            /*nameDiv.appendChild(nameLabelDiv);*/
-            nameDiv.appendChild(nameValueDiv);
-            userDiv.appendChild(nameDiv);
-        }
-          
+        let userDiv: HTMLDivElement = document.createElement("div");
+        userDiv.id = user.eMail;
+        userDiv.setAttribute("class", "user");
+        let nameDiv: HTMLDivElement = document.createElement("div");
+        nameDiv.textContent = user.name + " " + user.surName;
+        userDiv.appendChild(nameDiv);
+        userDiv.addEventListener("click", onUserClick);
+
         // Add user to userDiv
         usersDiv.appendChild(userDiv);
-        userCount++;
     }
 }
 

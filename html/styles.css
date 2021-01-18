@@ -77,8 +77,8 @@ textarea {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-textarea:focus {
-    border: unset;
+:focus {
+    outline: none;
 }
 
 input[type=button] {
@@ -137,4 +137,14 @@ h2 {
 .img-header {
     width: 40%;
     height: auto;
+}
+
+.user {
+    margin: 1em;
+    padding: 1em;
+}
+
+.user:hover {
+    border: solid 1px black;
+    padding: calc(1em - 1px);
 }
