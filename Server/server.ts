@@ -305,5 +305,6 @@ export namespace Server {
         // Return users array
         return users;
     }
+    
 }
 
