@@ -12,8 +12,8 @@ async function register(): Promise<void> {
     // Get the form content and prepare the http request
     let formData: FormData = new FormData(document.forms[0]);
     let query: URLSearchParams = new URLSearchParams(<any>formData);
-    var currentUser: string = query.get("eMail");
-    var currentPassword: string = query.get("password");
+    let currentUser: string = query.get("eMail");
+    let currentPassword: string = query.get("password");
 
     let queryUrl: string = url + "register" + "?" + query.toString();
     

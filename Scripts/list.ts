@@ -129,7 +129,7 @@ async function onSendMessageClick(): Promise<void> {
     serverResult.appendChild(text);
 }
 
-async function initializeMessages() {
+async function initializeMessages(): Promise<void> {
 
     let sendMessageButton: HTMLElement = document.getElementById("sendmessage");
     sendMessageButton.addEventListener("click", onSendMessageClick);

@@ -1,6 +1,7 @@
 import * as Http from "http";
 import * as Url from "url";
 import * as Mongo from "mongodb";
+import { ParsedUrlQuery } from "querystring";
 
 /**
  * User class
@@ -175,10 +176,10 @@ export namespace Server {
         if (q.pathname == "/login") {
             // Handle login command     
             _response.setHeader("content-type", "text/html; charset=utf-8");
-            var queryParameters: any = q.query;
+            let queryParameters: ParsedUrlQuery = q.query;
 
             // Login user 
-            var loginResult: StatusCodes = await loginUserViaMongoDb(queryParameters.eMail as string, queryParameters.password as string);
+            let loginResult: StatusCodes = await loginUserViaMongoDb(queryParameters.eMail as string, queryParameters.password as string);
 
             // Write statuscode to response
             _response.write(String(loginResult));
@@ -188,7 +189,7 @@ export namespace Server {
             _response.setHeader("content-type", "text/html; charset=utf-8");
 
             // Create user object from query
-            var queryParameters: any = q.query;
+            let queryParameters: ParsedUrlQuery = q.query;
 
             let user: User = new User(
                 queryParameters.eMail as string,
@@ -202,7 +203,7 @@ export namespace Server {
             user.password = queryParameters.password as string;
 
             // Register user in database
-            var registerResult: StatusCodes = await addUserToMongoDb(user);
+            let registerResult: StatusCodes = await addUserToMongoDb(user);
 
             // Write statuscode to response
             _response.write(String(registerResult));
@@ -212,7 +213,7 @@ export namespace Server {
             _response.setHeader("content-type", "application/json; charset=utf-8");
 
             // Get users from database
-            var users: User[] = await getUsersFromMongoDb();
+            let users: User[] = await getUsersFromMongoDb();
 
             // Write users as json to response
             _response.write(JSON.stringify(users));
@@ -221,15 +222,15 @@ export namespace Server {
             _response.setHeader("content-type", "text/html; charset=utf-8");
 
             // Create subscription object from query
-            var queryParameters: any = q.query;
+            let queryParameters: ParsedUrlQuery = q.query;
 
 
             if (!queryParameters.subscriber || queryParameters.subscriber.length === 0) {
                 _response.write(String(StatusCodes.BadDataRecived));
             }
             else {
-                var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
-                var subscribeResult = await subscribeUserToMongoDb(subscription);
+                let subscription: Subscription = new Subscription(queryParameters.subscriber.toString(), queryParameters.subscriptionTarget.toString());
+                let subscribeResult: StatusCodes = await subscribeUserToMongoDb(subscription);
 
                 _response.write(String(subscribeResult));
             }
@@ -238,14 +239,14 @@ export namespace Server {
             _response.setHeader("content-type", "text/html; charset=utf-8");
 
             // Create subscription object from query
-            var queryParameters: any = q.query;
+            let queryParameters: ParsedUrlQuery = q.query;
 
             if (!queryParameters.user || queryParameters.user.length === 0
                 || !queryParameters.message || queryParameters.message.length === 0) {
                 _response.write(String(StatusCodes.BadDataRecived));
             } else {
-                var message = new MessageBase(queryParameters.user, queryParameters.message);
-                var messageResult = await sendMessageToMongoDb(message);
+                let message: MessageBase = new MessageBase(queryParameters.user.toString(), queryParameters.message.toString());
+                let messageResult: StatusCodes = await sendMessageToMongoDb(message);
 
                 _response.write(String(messageResult));
             }
@@ -255,10 +256,10 @@ export namespace Server {
             _response.setHeader("content-type", "application/json; charset=utf-8");
 
             // Create subscription object from query
-            var queryParameters: any = q.query;
+            let queryParameters: ParsedUrlQuery = q.query;
 
             // Get users from database
-            var messages: Message[] = await getSubscribedMessagesFromMongoDb(queryParameters.user);
+            let messages: Message[] = await getSubscribedMessagesFromMongoDb(queryParameters.user.toString());
 
             // Write users as json to response
             _response.write(JSON.stringify(messages));
@@ -276,7 +277,7 @@ export namespace Server {
 
     async function subscribeUserToMongoDb(subscription: Subscription): Promise<StatusCodes> {
         let subscriptions: Mongo.Collection = mongoClient.db("App").collection("Subscriptions");
-        var existingSubscription: number = await subscriptions.countDocuments({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
+        let existingSubscription: number = await subscriptions.countDocuments({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
 
         if (existingSubscription > 0) {
             // User with email already exists in db
@@ -284,7 +285,7 @@ export namespace Server {
         }
         else {
             // Insert subscription in database
-            var result: Mongo.InsertOneWriteOpResult<any> = await subscriptions.insertOne(subscription);
+            let result: Mongo.InsertOneWriteOpResult<any> = await subscriptions.insertOne(subscription);
 
             if (result.insertedCount == 1) {
                 // User successfully added
@@ -301,7 +302,7 @@ export namespace Server {
     async function sendMessageToMongoDb(message: MessageBase): Promise<StatusCodes> {
         let messages: Mongo.Collection = mongoClient.db("App").collection("Messages");
 
-        var result: Mongo.InsertOneWriteOpResult<any> = await messages.insertOne(message);
+        let result: Mongo.InsertOneWriteOpResult<any> = await messages.insertOne(message);
 
         if (result.insertedCount == 1) {
             // User successfully added
@@ -332,7 +333,7 @@ export namespace Server {
         console.log(JSON.stringify(messages));
 
         // Decode each user document to a user object
-        let fullMessages: Message[] = messages.map((message: MessageBase) => new Message(message.userMail, null, message.text))
+        let fullMessages: Message[] = messages.map((message: MessageBase) => new Message(message.userMail, null, message.text));
 
         // Return users array
         return fullMessages;
@@ -346,7 +347,7 @@ export namespace Server {
 
         // Check for existing user
         let users: Mongo.Collection = mongoClient.db("App").collection("Users");
-        var existingUserCount: number = await users.countDocuments({ "eMail": user.eMail });
+        let existingUserCount: number = await users.countDocuments({ "eMail": user.eMail });
 
         if (existingUserCount > 0) {
             // User with email already exists in db
@@ -355,7 +356,7 @@ export namespace Server {
         else {
 
             // Insert user in database
-            var result: Mongo.InsertOneWriteOpResult<any> = await users.insertOne(user);
+            let result: Mongo.InsertOneWriteOpResult<any> = await users.insertOne(user);
 
             if (result.insertedCount == 1) {
                 // User successfully added
@@ -377,7 +378,7 @@ export namespace Server {
 
         // Check if theres an user with the given email and password
         let users: Mongo.Collection = mongoClient.db("App").collection("Users");
-        var existingUserCount: number = await users.countDocuments({ "eMail": eMail, "password": password });
+        let existingUserCount: number = await users.countDocuments({ "eMail": eMail, "password": password });
 
         if (existingUserCount > 0) {
             // User successfully logged in
@@ -396,7 +397,7 @@ export namespace Server {
 
         // Get all users from database
         let userCollection: Mongo.Collection = mongoClient.db("App").collection("Users");
-        let userDocuments: any[] = await userCollection.find().toArray();
+        let userDocuments: User[] = await userCollection.find().toArray();
 
         let users: User[] = [];
 

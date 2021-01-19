@@ -10,11 +10,11 @@ async function login() {
     // Get the form content and prepare the http request
     let formData = new FormData(document.forms[0]);
     let query = new URLSearchParams(formData);
-    var currentUser = query.get("eMail");
-    var currentPassword = query.get("password");
+    let currentUser = query.get("eMail");
+    let currentPassword = query.get("password");
     let queryUrl = url + "login" + "?" + query.toString();
     // Fetch the response
-    var response = await fetch(queryUrl);
+    let response = await fetch(queryUrl);
     let text = document.createElement("p");
     if (response.status != 200) {
         // Server Error

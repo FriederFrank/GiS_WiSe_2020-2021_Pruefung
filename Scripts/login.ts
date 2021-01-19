@@ -14,13 +14,13 @@ async function login(): Promise<void> {
     // Get the form content and prepare the http request
     let formData: FormData = new FormData(document.forms[0]);
     let query: URLSearchParams = new URLSearchParams(<any>formData);
-    var currentUser: string = query.get("eMail");
-    var currentPassword: string = query.get("password");
+    let currentUser: string = query.get("eMail");
+    let currentPassword: string = query.get("password");
 
     let queryUrl: string = url + "login" + "?" + query.toString();
     
     // Fetch the response
-    var response: Response = await fetch(queryUrl);
+    let response: Response = await fetch(queryUrl);
     
     let text: HTMLParagraphElement = document.createElement("p");
 

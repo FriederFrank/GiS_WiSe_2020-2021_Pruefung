@@ -113,9 +113,9 @@ var Server;
         if (q.pathname == "/login") {
             // Handle login command     
             _response.setHeader("content-type", "text/html; charset=utf-8");
-            var queryParameters = q.query;
+            let queryParameters = q.query;
             // Login user 
-            var loginResult = await loginUserViaMongoDb(queryParameters.eMail, queryParameters.password);
+            let loginResult = await loginUserViaMongoDb(queryParameters.eMail, queryParameters.password);
             // Write statuscode to response
             _response.write(String(loginResult));
         }
@@ -123,11 +123,11 @@ var Server;
             // Handle register command
             _response.setHeader("content-type", "text/html; charset=utf-8");
             // Create user object from query
-            var queryParameters = q.query;
+            let queryParameters = q.query;
             let user = new User(queryParameters.eMail, queryParameters.name, queryParameters.surName, queryParameters.adress, queryParameters.city, queryParameters.postcode, queryParameters.country);
             user.password = queryParameters.password;
             // Register user in database
-            var registerResult = await addUserToMongoDb(user);
+            let registerResult = await addUserToMongoDb(user);
             // Write statuscode to response
             _response.write(String(registerResult));
         }
@@ -135,34 +135,34 @@ var Server;
             // Handle list command         
             _response.setHeader("content-type", "application/json; charset=utf-8");
             // Get users from database
-            var users = await getUsersFromMongoDb();
+            let users = await getUsersFromMongoDb();
             // Write users as json to response
             _response.write(JSON.stringify(users));
         }
         else if (q.pathname == "/subscribe") {
             _response.setHeader("content-type", "text/html; charset=utf-8");
             // Create subscription object from query
-            var queryParameters = q.query;
+            let queryParameters = q.query;
             if (!queryParameters.subscriber || queryParameters.subscriber.length === 0) {
                 _response.write(String(6 /* BadDataRecived */));
             }
             else {
-                var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
-                var subscribeResult = await subscribeUserToMongoDb(subscription);
+                let subscription = new Subscription(queryParameters.subscriber.toString(), queryParameters.subscriptionTarget.toString());
+                let subscribeResult = await subscribeUserToMongoDb(subscription);
                 _response.write(String(subscribeResult));
             }
         }
         else if (q.pathname == "/message") {
             _response.setHeader("content-type", "text/html; charset=utf-8");
             // Create subscription object from query
-            var queryParameters = q.query;
+            let queryParameters = q.query;
             if (!queryParameters.user || queryParameters.user.length === 0
                 || !queryParameters.message || queryParameters.message.length === 0) {
                 _response.write(String(6 /* BadDataRecived */));
             }
             else {
-                var message = new MessageBase(queryParameters.user, queryParameters.message);
-                var messageResult = await sendMessageToMongoDb(message);
+                let message = new MessageBase(queryParameters.user.toString(), queryParameters.message.toString());
+                let messageResult = await sendMessageToMongoDb(message);
                 _response.write(String(messageResult));
             }
         }
@@ -170,9 +170,9 @@ var Server;
             // Handle list command         
             _response.setHeader("content-type", "application/json; charset=utf-8");
             // Create subscription object from query
-            var queryParameters = q.query;
+            let queryParameters = q.query;
             // Get users from database
-            var messages = await getSubscribedMessagesFromMongoDb(queryParameters.user);
+            let messages = await getSubscribedMessagesFromMongoDb(queryParameters.user.toString());
             // Write users as json to response
             _response.write(JSON.stringify(messages));
         }
@@ -187,14 +187,14 @@ var Server;
     }
     async function subscribeUserToMongoDb(subscription) {
         let subscriptions = mongoClient.db("App").collection("Subscriptions");
-        var existingSubscription = await subscriptions.countDocuments({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
+        let existingSubscription = await subscriptions.countDocuments({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
         if (existingSubscription > 0) {
             // User with email already exists in db
             return 5 /* AlreadySubscribed */;
         }
         else {
             // Insert subscription in database
-            var result = await subscriptions.insertOne(subscription);
+            let result = await subscriptions.insertOne(subscription);
             if (result.insertedCount == 1) {
                 // User successfully added
                 return 1 /* Good */;
@@ -207,7 +207,7 @@ var Server;
     }
     async function sendMessageToMongoDb(message) {
         let messages = mongoClient.db("App").collection("Messages");
-        var result = await messages.insertOne(message);
+        let result = await messages.insertOne(message);
         if (result.insertedCount == 1) {
             // User successfully added
             return 1 /* Good */;
@@ -244,14 +244,14 @@ var Server;
     async function addUserToMongoDb(user) {
         // Check for existing user
         let users = mongoClient.db("App").collection("Users");
-        var existingUserCount = await users.countDocuments({ "eMail": user.eMail });
+        let existingUserCount = await users.countDocuments({ "eMail": user.eMail });
         if (existingUserCount > 0) {
             // User with email already exists in db
             return 3 /* BadEmailExists */;
         }
         else {
             // Insert user in database
-            var result = await users.insertOne(user);
+            let result = await users.insertOne(user);
             if (result.insertedCount == 1) {
                 // User successfully added
                 return 1 /* Good */;
@@ -270,7 +270,7 @@ var Server;
     async function loginUserViaMongoDb(eMail, password) {
         // Check if theres an user with the given email and password
         let users = mongoClient.db("App").collection("Users");
-        var existingUserCount = await users.countDocuments({ "eMail": eMail, "password": password });
+        let existingUserCount = await users.countDocuments({ "eMail": eMail, "password": password });
         if (existingUserCount > 0) {
             // User successfully logged in
             return 1 /* Good */;
