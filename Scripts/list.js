@@ -115,7 +115,7 @@ async function initializeMessages() {
     // Get the "users" div
     let messagesDiv = document.getElementById("messages");
     // For each user
-    for (const message of messages) {
+    for (const message of messages.reverse()) {
         let messageDiv = document.createElement("div");
         messageDiv.setAttribute("class", "message");
         let textDiv = document.createElement("div");

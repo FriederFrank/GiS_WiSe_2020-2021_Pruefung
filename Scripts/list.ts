@@ -153,7 +153,7 @@ async function initializeMessages() {
     let messagesDiv: HTMLElement = document.getElementById("messages");
 
     // For each user
-    for (const message of messages) {
+    for (const message of messages.reverse()) {
 
         let messageDiv: HTMLDivElement = document.createElement("div");
         messageDiv.setAttribute("class", "message");
