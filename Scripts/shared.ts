@@ -67,6 +67,47 @@ class Subscription {
   }
 }
 
+
+/**
+ * Subscription class
+ */
+class MessageBase {
+  userMail: string;
+  text: string;
+
+  /**
+   * Ctor
+   * @param userMail 
+   * @param text 
+   */
+  constructor(
+      userMail: string,
+      text: string
+  ) {
+      this.userMail = userMail;
+      this.text = text;
+  }
+}
+
+class Message extends MessageBase {
+  user: User;
+
+  /**
+   * Ctor
+   * @param userMail 
+   * @param user 
+   * @param message 
+   */
+  constructor(
+      userMail: string,
+      user: User,
+      message: string
+  ) {
+      super(userMail, message);
+      this.user = user;
+  }
+}
+
 /**
  * StatusCodes
  */

@@ -41,4 +41,30 @@ class Subscription {
         this.subcsriptionTarget = subcsriptionTarget;
     }
 }
+/**
+ * Subscription class
+ */
+class MessageBase {
+    /**
+     * Ctor
+     * @param userMail
+     * @param text
+     */
+    constructor(userMail, text) {
+        this.userMail = userMail;
+        this.text = text;
+    }
+}
+class Message extends MessageBase {
+    /**
+     * Ctor
+     * @param userMail
+     * @param user
+     * @param message
+     */
+    constructor(userMail, user, message) {
+        super(userMail, message);
+        this.user = user;
+    }
+}
 //# sourceMappingURL=shared.js.map

@@ -64,5 +64,70 @@ async function getUsersFromServer() {
         usersDiv.appendChild(userDiv);
     }
 }
+async function onSendMessageClick() {
+    // Get current user
+    let currentUser = localStorage.getItem("currentUser");
+    // Get message element
+    let messageTextArea = document.getElementById("message");
+    // Get the form content and prepare the http request
+    let query = new URLSearchParams();
+    query.append("user", currentUser);
+    query.append("message", messageTextArea.value);
+    let queryUrl = url + "message" + "?" + query.toString();
+    // Fetch the response
+    let response = await fetch(queryUrl);
+    let text = document.createElement("p");
+    if (response.status != 200) {
+        // Server Error
+        text.innerText = "Unbekannter Server Fehler!";
+    }
+    else {
+        // Get return value
+        let responseText = await response.text();
+        let statusCode = Number.parseInt(responseText);
+        // Interpret return value
+        if (statusCode == 1 /* Good */) {
+            text.innerText = "Nachricht erfolgreich verschickt!";
+        }
+        else if (statusCode == 2 /* BadDatabaseProblem */) {
+            text.innerText = "Unbekanntes Datenbank Problem";
+        }
+    }
+    let serverResult = document.getElementById("serverresult");
+    while (serverResult.hasChildNodes()) {
+        serverResult.removeChild(serverResult.firstChild);
+    }
+    serverResult.appendChild(text);
+}
+async function initializeMessages() {
+    let sendMessageButton = document.getElementById("sendmessage");
+    sendMessageButton.addEventListener("click", onSendMessageClick);
+    // Get current user
+    let currentUser = localStorage.getItem("currentUser");
+    // Get the form content and prepare the http request
+    let query = new URLSearchParams();
+    query.append("user", currentUser);
+    let queryUrl = url + "messages" + "?" + query.toString();
+    // Fetch data from server
+    let response = await fetch(queryUrl);
+    // Deserialize data to messages array
+    let messages = await response.json();
+    // Get the "users" div
+    let messagesDiv = document.getElementById("messages");
+    // For each user
+    for (const message of messages) {
+        let messageDiv = document.createElement("div");
+        messageDiv.setAttribute("class", "message");
+        let textDiv = document.createElement("div");
+        textDiv.textContent = message.text;
+        let nameDiv = document.createElement("div");
+        nameDiv.textContent = message.userMail;
+        messageDiv.appendChild(nameDiv);
+        messageDiv.addEventListener("click", onUserClick);
+        // Add message to messagesDiv
+        messagesDiv.appendChild(messageDiv);
+    }
+}
 getUsersFromServer();
+initializeMessages();
 //# sourceMappingURL=list.js.map

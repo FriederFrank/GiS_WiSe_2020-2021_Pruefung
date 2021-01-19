@@ -143,17 +143,28 @@ var Server;
             _response.setHeader("content-type", "text/html; charset=utf-8");
             // Create subscription object from query
             var queryParameters = q.query;
-            var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
-            var subscribeResult = await subscribeUserToMongoDb(subscription);
-            _response.write(String(subscribeResult));
+            if (!queryParameters.subscriber || queryParameters.subscriber.length === 0) {
+                _response.write(String(6 /* BadDataRecived */));
+            }
+            else {
+                var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
+                var subscribeResult = await subscribeUserToMongoDb(subscription);
+                _response.write(String(subscribeResult));
+            }
         }
         else if (q.pathname == "/message") {
             _response.setHeader("content-type", "text/html; charset=utf-8");
             // Create subscription object from query
             var queryParameters = q.query;
-            var message = new MessageBase(queryParameters.user, queryParameters.message);
-            var messageResult = await sendMessageToMongoDb(message);
-            _response.write(String(messageResult));
+            if (!queryParameters.user || queryParameters.subscriber.user === 0
+                || !queryParameters.message || queryParameters.subscriber.message === 0) {
+                _response.write(String(6 /* BadDataRecived */));
+            }
+            else {
+                var message = new MessageBase(queryParameters.user, queryParameters.message);
+                var messageResult = await sendMessageToMongoDb(message);
+                _response.write(String(messageResult));
+            }
         }
         else if (q.pathname == "/messages") {
             // Handle list command         
@@ -214,9 +225,13 @@ var Server;
         let subscriptions = await subscriptionCollection.find({ "subscriber": user }).toArray();
         let subscribedUsers = subscriptions.map((value) => value.subcsriptionTarget);
         subscribedUsers.push(user);
+        console.log("SubscribedUsers:");
+        console.log(JSON.stringify(subscribedUsers));
         // Get all messages from database
         let messagesCollection = mongoClient.db("App").collection("Messages");
         let messages = await messagesCollection.find({ "userMail": subscribedUsers }).toArray();
+        console.log("Messages:");
+        console.log(JSON.stringify(messages));
         // Decode each user document to a user object
         let fullMessages = messages.map((message) => new Message(message.userMail, null, message.text));
         // Return users array

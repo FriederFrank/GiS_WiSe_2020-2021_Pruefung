@@ -114,7 +114,8 @@ const enum StatusCodes {
     BadDatabaseProblem = 2,
     BadEmailExists = 3,
     BadWrongPassword = 4,
-    AlreadySubscribed = 5
+    AlreadySubscribed = 5,
+    BadDataRecived = 6
 }
 
 export namespace Server {
@@ -222,10 +223,16 @@ export namespace Server {
             // Create subscription object from query
             var queryParameters: any = q.query;
 
-            var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
-            var subscribeResult = await subscribeUserToMongoDb(subscription);
 
-            _response.write(String(subscribeResult));
+            if (!queryParameters.subscriber || queryParameters.subscriber.length === 0) {
+                _response.write(String(StatusCodes.BadDataRecived));
+            }
+            else {
+                var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
+                var subscribeResult = await subscribeUserToMongoDb(subscription);
+
+                _response.write(String(subscribeResult));
+            }
         }
         else if (q.pathname == "/message") {
             _response.setHeader("content-type", "text/html; charset=utf-8");
@@ -233,10 +240,15 @@ export namespace Server {
             // Create subscription object from query
             var queryParameters: any = q.query;
 
-            var message = new MessageBase(queryParameters.user, queryParameters.message);
-            var messageResult = await sendMessageToMongoDb(message);
+            if (!queryParameters.user || queryParameters.subscriber.user === 0
+                || !queryParameters.message || queryParameters.subscriber.message === 0) {
+                _response.write(String(StatusCodes.BadDataRecived));
+            } else {
+                var message = new MessageBase(queryParameters.user, queryParameters.message);
+                var messageResult = await sendMessageToMongoDb(message);
 
-            _response.write(String(messageResult));
+                _response.write(String(messageResult));
+            }
         }
         else if (q.pathname == "/messages") {
             // Handle list command         
@@ -308,12 +320,16 @@ export namespace Server {
         let subscriptionCollection: Mongo.Collection = mongoClient.db("App").collection("Subscriptions");
         let subscriptions: Subscription[] = await subscriptionCollection.find({ "subscriber": user }).toArray();
         let subscribedUsers: string[] = subscriptions.map((value: Subscription) => value.subcsriptionTarget);
-
         subscribedUsers.push(user);
+
+        console.log("SubscribedUsers:");
+        console.log(JSON.stringify(subscribedUsers));
 
         // Get all messages from database
         let messagesCollection: Mongo.Collection = mongoClient.db("App").collection("Messages");
         let messages: MessageBase[] = await messagesCollection.find({ "userMail": subscribedUsers }).toArray();
+        console.log("Messages:");
+        console.log(JSON.stringify(messages));
 
         // Decode each user document to a user object
         let fullMessages: Message[] = messages.map((message: MessageBase) => new Message(message.userMail, null, message.text))
