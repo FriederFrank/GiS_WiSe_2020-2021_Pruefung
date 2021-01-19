@@ -156,8 +156,8 @@ var Server;
             _response.setHeader("content-type", "text/html; charset=utf-8");
             // Create subscription object from query
             var queryParameters = q.query;
-            if (!queryParameters.user || queryParameters.subscriber.user === 0
-                || !queryParameters.message || queryParameters.subscriber.message === 0) {
+            if (!queryParameters.user || queryParameters.user.length === 0
+                || !queryParameters.message || queryParameters.message.length === 0) {
                 _response.write(String(6 /* BadDataRecived */));
             }
             else {
