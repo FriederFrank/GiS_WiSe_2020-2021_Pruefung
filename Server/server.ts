@@ -176,20 +176,24 @@ export namespace Server {
             _response.write(JSON.stringify(users));
         }
         else if (q.pathname == "/subscribe"){
-
+            console.log(_request.url);
             _response.setHeader("content-type", "text/html; charset=utf-8");
+            console.log(_request.url);
+            _response.write(String(1337));
 
-            // Create subscription object from query
-            var queryParameters: any = q.query;
-
+            // // Create subscription object from query
+            // var queryParameters: any = q.query;
+            console.log(_request.url);
             
-            var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
-            var subscribeResult = subscribeUserToMongoDb(subscription);
+            // var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
+            // var subscribeResult = subscribeUserToMongoDb(subscription);
    
-            _response.write(String(subscribeResult));
+            // _response.write(String(subscribeResult));
         }
         else {
             // Log unhandled paths
+            _response.setHeader("content-type", "text/html; charset=utf-8");
+            _response.write(String(1338));
             console.log(_request.url);
         }
 
