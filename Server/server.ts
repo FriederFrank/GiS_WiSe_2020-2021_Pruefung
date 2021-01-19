@@ -327,7 +327,7 @@ export namespace Server {
 
         // Get all messages from database
         let messagesCollection: Mongo.Collection = mongoClient.db("App").collection("Messages");
-        let messages: MessageBase[] = await messagesCollection.find({ "userMail": subscribedUsers }).toArray();
+        let messages: MessageBase[] = await messagesCollection.find({ "userMail": { $in: subscribedUsers } }).toArray();
         console.log("Messages:");
         console.log(JSON.stringify(messages));
 

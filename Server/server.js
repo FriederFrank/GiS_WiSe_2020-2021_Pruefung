@@ -229,7 +229,7 @@ var Server;
         console.log(JSON.stringify(subscribedUsers));
         // Get all messages from database
         let messagesCollection = mongoClient.db("App").collection("Messages");
-        let messages = await messagesCollection.find({ "userMail": subscribedUsers }).toArray();
+        let messages = await messagesCollection.find({ "userMail": { $in: subscribedUsers } }).toArray();
         console.log("Messages:");
         console.log(JSON.stringify(messages));
         // Decode each user document to a user object
