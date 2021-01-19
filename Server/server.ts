@@ -14,7 +14,7 @@ class User {
     city: string;
     postcode: string;
     country: string;
-  
+
     /**
      * Ctor
      * @param eMail 
@@ -26,23 +26,23 @@ class User {
      * @param country 
      */
     constructor(
-      eMail: string,
-      name: string,
-      surName: string,
-      adress: string,
-      city: string,
-      postcode: string,
-      country: string
+        eMail: string,
+        name: string,
+        surName: string,
+        adress: string,
+        city: string,
+        postcode: string,
+        country: string
     ) {
-      this.eMail = eMail;
-      this.name = name;
-      this.surName = surName;
-      this.adress = adress;
-      this.city = city;
-      this.postcode = postcode;
-      this.country = country;
+        this.eMail = eMail;
+        this.name = name;
+        this.surName = surName;
+        this.adress = adress;
+        this.city = city;
+        this.postcode = postcode;
+        this.country = country;
     }
-  }
+}
 
 /**
  * Subscription class
@@ -58,12 +58,52 @@ class Subscription {
      */
     constructor(
         subscriber: string,
-        subcsriptionTarget: string,
+        subcsriptionTarget: string
     ) {
-      this.subscriber = subscriber;
-      this.subcsriptionTarget = subcsriptionTarget;
+        this.subscriber = subscriber;
+        this.subcsriptionTarget = subcsriptionTarget;
     }
-  }
+}
+
+/**
+ * Subscription class
+ */
+class MessageBase {
+    userMail: string;
+    message: string;
+    
+    /**
+     * Ctor
+     * @param subscriber 
+     * @param subcsriptionTarget 
+     */
+    constructor(
+        userMail: string,
+        message: string
+    ) {
+        this.userMail = userMail;
+        this.message = message;
+    }
+}
+
+class Message extends MessageBase {
+    user: User;
+
+    /**
+     * Ctor
+     * @param subscriber 
+     * @param subcsriptionTarget 
+     */
+    constructor(
+        userMail: string,
+        user: User,
+        message: string
+    ) {
+        super(userMail, message);
+        this.user = user;
+    }
+}
+
 
 /**
  * Status codes
@@ -74,10 +114,10 @@ const enum StatusCodes {
     BadEmailExists = 3,
     BadWrongPassword = 4,
     AlreadySubscribed = 5
-  }
+}
 
 export namespace Server {
-    
+
     // Start the HTTP server
     console.log("Starting server");
     let port: number = Number(process.env.PORT);
@@ -85,7 +125,7 @@ export namespace Server {
         port = 8100;
 
     let server: Http.Server = Http.createServer();
-    
+
     // Add listeners
     server.addListener("request", handleRequest);
     server.addListener("listening", handleListen);
@@ -112,14 +152,14 @@ export namespace Server {
      * @param _response 
      */
     async function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerResponse): Promise<void> {
-        
+
         // Parse request url
         let q: Url.UrlWithParsedQuery = Url.parse(_request.url, true);
-        
+
         // Skip favicon requests
         if (q.path == "/favicon.ico") {
             _response.end();
-            return; 
+            return;
         }
 
         // Set header responses
@@ -137,17 +177,17 @@ export namespace Server {
 
             // Login user 
             var loginResult: StatusCodes = await loginUserViaMongoDb(queryParameters.eMail as string, queryParameters.password as string);
-            
+
             // Write statuscode to response
             _response.write(String(loginResult));
         }
         else if (q.pathname == "/register") {
             // Handle register command
             _response.setHeader("content-type", "text/html; charset=utf-8");
-            
+
             // Create user object from query
             var queryParameters: any = q.query;
-            
+
             let user: User = new User(
                 queryParameters.eMail as string,
                 queryParameters.name as string,
@@ -156,44 +196,51 @@ export namespace Server {
                 queryParameters.city as string,
                 queryParameters.postcode as string,
                 queryParameters.country as string
-            );    
+            );
             user.password = queryParameters.password as string;
- 
+
             // Register user in database
             var registerResult: StatusCodes = await addUserToMongoDb(user);
-            
+
             // Write statuscode to response
             _response.write(String(registerResult));
         }
         else if (q.pathname == "/list") {
             // Handle list command         
             _response.setHeader("content-type", "application/json; charset=utf-8");
-            
+
             // Get users from database
             var users: User[] = await getUsersFromMongoDb();
-            
+
             // Write users as json to response
             _response.write(JSON.stringify(users));
         }
-        else if (q.pathname == "/subscribe"){
-            console.log(_request.url);
+         else if (q.pathname == "/subscribe"){
             _response.setHeader("content-type", "text/html; charset=utf-8");
-      
-        
 
             // Create subscription object from query
             var queryParameters: any = q.query;
-          
-            
+
             var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
-            var subscribeResult = subscribeUserToMongoDb(subscription);
-   
+            var subscribeResult = await subscribeUserToMongoDb(subscription);
+
+            _response.write(String(subscribeResult));
+        }
+         else if (q.pathname == "/message"){
+            _response.setHeader("content-type", "text/html; charset=utf-8");
+
+            // Create subscription object from query
+            var queryParameters: any = q.query;
+
+            var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
+            var subscribeResult = await subscribeUserToMongoDb(subscription);
+
             _response.write(String(subscribeResult));
         }
         else {
             // Log unhandled paths
             _response.setHeader("content-type", "text/html; charset=utf-8");
-            _response.write(String(1338));
+            _response.write(String(1337));
             console.log(_request.url);
         }
 
@@ -201,36 +248,52 @@ export namespace Server {
         _response.end();
     }
 
-    async function subscribeUserToMongoDb(subscription: Subscription)
-    {
+    async function subscribeUserToMongoDb(subscription: Subscription): Promise<StatusCodes> {
         let subscriptions: Mongo.Collection = mongoClient.db("App").collection("Subscriptions");
         var existingSubscription: number = await subscriptions.countDocuments({"subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget});
-   
+
         if (existingSubscription > 0) {
             // User with email already exists in db
             return StatusCodes.AlreadySubscribed;
         }
-        else{
+         else{
              // Insert subscription in database
-             var result: Mongo.InsertOneWriteOpResult<any> = await subscriptions.insertOne(subscription);
-        
-             if (result.insertedCount == 1) {
+            var result: Mongo.InsertOneWriteOpResult<any> = await subscriptions.insertOne(subscription);
+
+            if (result.insertedCount == 1) {
                  // User successfully added
-                 return StatusCodes.Good;
+                return StatusCodes.Good;
              }
-             else {
-                 // Database problem
-                 return StatusCodes.BadDatabaseProblem;
+            else {
+                // Database problem
+                return StatusCodes.BadDatabaseProblem;
              }
         }
     }
 
+
+    async function sendMessageToMongoDb(message: MessageBase): Promise<StatusCodes> {
+        let messages: Mongo.Collection = mongoClient.db("App").collection("Messages");
+        // var existingSubscription: number = await subscriptions.countDocuments({"subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget});
+
+        var result: Mongo.InsertOneWriteOpResult<any> = await messages.insertOne(message);
+       
+        if (result.insertedCount == 1) {
+            // User successfully added
+           return StatusCodes.Good;
+        }
+       else {
+           // Database problem
+           return StatusCodes.BadDatabaseProblem;
+        }
+    }
+    
     /**
      * Adds a user to the MongoDb if its email does not exist already
      * @param user 
      */
     async function addUserToMongoDb(user: User): Promise<StatusCodes> {
-        
+   
         // Check for existing user
         let users: Mongo.Collection = mongoClient.db("App").collection("Users");
         var existingUserCount: number = await users.countDocuments({"eMail": user.eMail});
@@ -240,10 +303,10 @@ export namespace Server {
             return StatusCodes.BadEmailExists;
         }
         else {
-            
-             // Insert user in database
+    
+            // Insert user in database
             var result: Mongo.InsertOneWriteOpResult<any> = await users.insertOne(user);
-        
+
             if (result.insertedCount == 1) {
                 // User successfully added
                 return StatusCodes.Good;
@@ -255,7 +318,7 @@ export namespace Server {
         }
     }
 
-    /**
+   /**
      * Tests if the login with the given password works by checking the MongoDb
      * @param eMail 
      * @param password 

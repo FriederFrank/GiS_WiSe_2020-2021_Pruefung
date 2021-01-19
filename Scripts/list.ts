@@ -62,8 +62,15 @@ async function getUsersFromServer(): Promise<void> {
     // Get the "users" div
     let usersDiv: HTMLElement = document.getElementById("users");
 
+    // Get current user
+    let currentUser: string = localStorage.getItem("currentUser");
+
     // For each user
     for (const user of users) {
+
+        if (user.eMail == currentUser) {
+            continue;
+        }
 
         let userDiv: HTMLDivElement = document.createElement("div");
         userDiv.id = user.eMail;

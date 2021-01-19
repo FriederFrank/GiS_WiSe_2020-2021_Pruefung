@@ -46,8 +46,13 @@ async function getUsersFromServer() {
     let users = await response.json();
     // Get the "users" div
     let usersDiv = document.getElementById("users");
+    // Get current user
+    let currentUser = localStorage.getItem("currentUser");
     // For each user
     for (const user of users) {
+        if (user.eMail == currentUser) {
+            continue;
+        }
         let userDiv = document.createElement("div");
         userDiv.id = user.eMail;
         userDiv.setAttribute("class", "user");
