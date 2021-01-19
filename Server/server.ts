@@ -70,19 +70,19 @@ class Subscription {
  */
 class MessageBase {
     userMail: string;
-    message: string;
-    
+    text: string;
+
     /**
      * Ctor
-     * @param subscriber 
-     * @param subcsriptionTarget 
+     * @param userMail 
+     * @param text 
      */
     constructor(
         userMail: string,
-        message: string
+        text: string
     ) {
         this.userMail = userMail;
-        this.message = message;
+        this.text = text;
     }
 }
 
@@ -91,8 +91,9 @@ class Message extends MessageBase {
 
     /**
      * Ctor
-     * @param subscriber 
-     * @param subcsriptionTarget 
+     * @param userMail 
+     * @param user 
+     * @param message 
      */
     constructor(
         userMail: string,
@@ -215,7 +216,7 @@ export namespace Server {
             // Write users as json to response
             _response.write(JSON.stringify(users));
         }
-         else if (q.pathname == "/subscribe"){
+        else if (q.pathname == "/subscribe") {
             _response.setHeader("content-type", "text/html; charset=utf-8");
 
             // Create subscription object from query
@@ -226,16 +227,29 @@ export namespace Server {
 
             _response.write(String(subscribeResult));
         }
-         else if (q.pathname == "/message"){
+        else if (q.pathname == "/message") {
             _response.setHeader("content-type", "text/html; charset=utf-8");
 
             // Create subscription object from query
             var queryParameters: any = q.query;
 
-            var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
-            var subscribeResult = await subscribeUserToMongoDb(subscription);
+            var message = new MessageBase(queryParameters.user, queryParameters.message);
+            var messageResult = await sendMessageToMongoDb(message);
 
-            _response.write(String(subscribeResult));
+            _response.write(String(messageResult));
+        }
+        else if (q.pathname == "/messages") {
+            // Handle list command         
+            _response.setHeader("content-type", "application/json; charset=utf-8");
+
+            // Create subscription object from query
+            var queryParameters: any = q.query;
+
+            // Get users from database
+            var messages: Message[] = await getSubscribedMessagesFromMongoDb(queryParameters.user);
+
+            // Write users as json to response
+            _response.write(JSON.stringify(messages));
         }
         else {
             // Log unhandled paths
@@ -250,60 +264,80 @@ export namespace Server {
 
     async function subscribeUserToMongoDb(subscription: Subscription): Promise<StatusCodes> {
         let subscriptions: Mongo.Collection = mongoClient.db("App").collection("Subscriptions");
-        var existingSubscription: number = await subscriptions.countDocuments({"subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget});
+        var existingSubscription: number = await subscriptions.countDocuments({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
 
         if (existingSubscription > 0) {
             // User with email already exists in db
             return StatusCodes.AlreadySubscribed;
         }
-         else{
-             // Insert subscription in database
+        else {
+            // Insert subscription in database
             var result: Mongo.InsertOneWriteOpResult<any> = await subscriptions.insertOne(subscription);
 
             if (result.insertedCount == 1) {
-                 // User successfully added
+                // User successfully added
                 return StatusCodes.Good;
-             }
+            }
             else {
                 // Database problem
                 return StatusCodes.BadDatabaseProblem;
-             }
+            }
         }
     }
 
 
     async function sendMessageToMongoDb(message: MessageBase): Promise<StatusCodes> {
         let messages: Mongo.Collection = mongoClient.db("App").collection("Messages");
-        // var existingSubscription: number = await subscriptions.countDocuments({"subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget});
 
         var result: Mongo.InsertOneWriteOpResult<any> = await messages.insertOne(message);
-       
+
         if (result.insertedCount == 1) {
             // User successfully added
-           return StatusCodes.Good;
+            return StatusCodes.Good;
         }
-       else {
-           // Database problem
-           return StatusCodes.BadDatabaseProblem;
+        else {
+            // Database problem
+            return StatusCodes.BadDatabaseProblem;
         }
     }
-    
+
+    /**
+     * Gets all users and their details from the MongoDb
+     */
+    async function getSubscribedMessagesFromMongoDb(user: string): Promise<Message[]> {
+        let subscriptionCollection: Mongo.Collection = mongoClient.db("App").collection("Subscriptions");
+        let subscriptions: Subscription[] = await subscriptionCollection.find({ "subscriber": user }).toArray();
+        let subscribedUsers: string[] = subscriptions.map((value: Subscription) => value.subcsriptionTarget);
+
+        subscribedUsers.push(user);
+
+        // Get all messages from database
+        let messagesCollection: Mongo.Collection = mongoClient.db("App").collection("Messages");
+        let messages: MessageBase[] = await messagesCollection.find({ "userMail": subscribedUsers }).toArray();
+
+        // Decode each user document to a user object
+        let fullMessages: Message[] = messages.map((message: MessageBase) => new Message(message.userMail, null, message.text))
+
+        // Return users array
+        return fullMessages;
+    }
+
     /**
      * Adds a user to the MongoDb if its email does not exist already
      * @param user 
      */
     async function addUserToMongoDb(user: User): Promise<StatusCodes> {
-   
+
         // Check for existing user
         let users: Mongo.Collection = mongoClient.db("App").collection("Users");
-        var existingUserCount: number = await users.countDocuments({"eMail": user.eMail});
+        var existingUserCount: number = await users.countDocuments({ "eMail": user.eMail });
 
         if (existingUserCount > 0) {
             // User with email already exists in db
             return StatusCodes.BadEmailExists;
         }
         else {
-    
+
             // Insert user in database
             var result: Mongo.InsertOneWriteOpResult<any> = await users.insertOne(user);
 
@@ -318,16 +352,16 @@ export namespace Server {
         }
     }
 
-   /**
-     * Tests if the login with the given password works by checking the MongoDb
-     * @param eMail 
-     * @param password 
-     */
+    /**
+      * Tests if the login with the given password works by checking the MongoDb
+      * @param eMail 
+      * @param password 
+      */
     async function loginUserViaMongoDb(eMail: string, password: string): Promise<StatusCodes> {
-        
+
         // Check if theres an user with the given email and password
         let users: Mongo.Collection = mongoClient.db("App").collection("Users");
-        var existingUserCount: number = await users.countDocuments({"eMail": eMail, "password": password});
+        var existingUserCount: number = await users.countDocuments({ "eMail": eMail, "password": password });
 
         if (existingUserCount > 0) {
             // User successfully logged in
@@ -338,21 +372,21 @@ export namespace Server {
             return StatusCodes.BadWrongPassword;
         }
     }
- 
+
     /**
      * Gets all users and their details from the MongoDb
      */
     async function getUsersFromMongoDb(): Promise<User[]> {
-        
+
         // Get all users from database
-        let userCollection: Mongo.Collection = mongoClient.db("App").collection("Users"); 
+        let userCollection: Mongo.Collection = mongoClient.db("App").collection("Users");
         let userDocuments: any[] = await userCollection.find().toArray();
-        
+
         let users: User[] = [];
 
         // Decode each user document to a user object
         for (const userDocument of userDocuments) {
-            
+
             let user: User = new User(
                 userDocument.eMail as string,
                 userDocument.name as string,
@@ -362,7 +396,7 @@ export namespace Server {
                 userDocument.postcode as string,
                 userDocument.country as string
             );
-            
+
             // Add user object to array
             users.push(user);
         }
@@ -370,6 +404,6 @@ export namespace Server {
         // Return users array
         return users;
     }
-    
+
 }
 
