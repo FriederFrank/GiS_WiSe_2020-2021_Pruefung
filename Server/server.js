@@ -28,8 +28,22 @@ class User {
         this.country = country;
     }
 }
+/**
+ * Subscription class
+ */
+class Subscription {
+    /**
+     * Ctor
+     * @param subscriber
+     * @param subcsriptionTarget
+     */
+    constructor(subscriber, subcsriptionTarget) {
+        this.subscriber = subscriber;
+        this.subcsriptionTarget = subcsriptionTarget;
+    }
+}
 var Server;
-(function(Server) {
+(function (Server) {
     // Start the HTTP server
     console.log("Starting server");
     let port = Number(process.env.PORT);
@@ -78,7 +92,8 @@ var Server;
             var loginResult = await loginUserViaMongoDb(queryParameters.eMail, queryParameters.password);
             // Write statuscode to response
             _response.write(String(loginResult));
-        } else if (q.pathname == "/register") {
+        }
+        else if (q.pathname == "/register") {
             // Handle register command
             _response.setHeader("content-type", "text/html; charset=utf-8");
             // Create user object from query
@@ -89,21 +104,52 @@ var Server;
             var registerResult = await addUserToMongoDb(user);
             // Write statuscode to response
             _response.write(String(registerResult));
-        } else if (q.pathname == "/list") {
+        }
+        else if (q.pathname == "/list") {
             // Handle list command         
             _response.setHeader("content-type", "application/json; charset=utf-8");
             // Get users from database
             var users = await getUsersFromMongoDb();
             // Write users as json to response
             _response.write(JSON.stringify(users));
-        } else if (q.pathname == "/subscribe") {
-
-        } else {
+        }
+        else if (q.pathname == "/subscribe") {
+            console.log(_request.url);
+            _response.setHeader("content-type", "text/html; charset=utf-8");
+            // Create subscription object from query
+            var queryParameters = q.query;
+            var subscription = new Subscription(queryParameters.subscriber, queryParameters.subscriptionTarget);
+            var subscribeResult = subscribeUserToMongoDb(subscription);
+            _response.write(String(subscribeResult));
+        }
+        else {
             // Log unhandled paths
+            _response.setHeader("content-type", "text/html; charset=utf-8");
+            _response.write(String(1338));
             console.log(_request.url);
         }
         //End response
         _response.end();
+    }
+    async function subscribeUserToMongoDb(subscription) {
+        let subscriptions = mongoClient.db("App").collection("Subscriptions");
+        var existingSubscription = await subscriptions.countDocuments({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
+        if (existingSubscription > 0) {
+            // User with email already exists in db
+            return 5 /* AlreadySubscribed */;
+        }
+        else {
+            // Insert subscription in database
+            var result = await subscriptions.insertOne(subscription);
+            if (result.insertedCount == 1) {
+                // User successfully added
+                return 1 /* Good */;
+            }
+            else {
+                // Database problem
+                return 2 /* BadDatabaseProblem */;
+            }
+        }
     }
     /**
      * Adds a user to the MongoDb if its email does not exist already
@@ -115,16 +161,18 @@ var Server;
         var existingUserCount = await users.countDocuments({ "eMail": user.eMail });
         if (existingUserCount > 0) {
             // User with email already exists in db
-            return 3 /* BadEmailExists */ ;
-        } else {
+            return 3 /* BadEmailExists */;
+        }
+        else {
             // Insert user in database
             var result = await users.insertOne(user);
             if (result.insertedCount == 1) {
                 // User successfully added
-                return 1 /* Good */ ;
-            } else {
+                return 1 /* Good */;
+            }
+            else {
                 // Database problem
-                return 2 /* BadDatabaseProblem */ ;
+                return 2 /* BadDatabaseProblem */;
             }
         }
     }
@@ -139,10 +187,11 @@ var Server;
         var existingUserCount = await users.countDocuments({ "eMail": eMail, "password": password });
         if (existingUserCount > 0) {
             // User successfully logged in
-            return 1 /* Good */ ;
-        } else {
+            return 1 /* Good */;
+        }
+        else {
             // No user with this email password combination
-            return 4 /* BadWrongPassword */ ;
+            return 4 /* BadWrongPassword */;
         }
     }
     /**
