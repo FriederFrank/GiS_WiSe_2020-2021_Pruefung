@@ -26,6 +26,21 @@ class User {
         this.country = country;
     }
 }
+class ExtendedUser extends User {
+    /**
+     * Ctor
+     * @param eMail
+     * @param name
+     * @param surName
+     * @param degreeCourse
+     * @param semester
+     * @param country
+     */
+    constructor(eMail, name, surName, degreeCourse, semester, country, isSubscribed) {
+        super(eMail, name, surName, degreeCourse, semester, country);
+        this.isSubscribed = isSubscribed;
+    }
+}
 /**
  * Subscription class
  */
@@ -132,8 +147,10 @@ var Server;
         else if (q.pathname == "/list") {
             // Handle list command         
             _response.setHeader("content-type", "application/json; charset=utf-8");
+            // Create subscription object from query
+            let queryParameters = q.query;
             // Get users from database
-            let users = await getUsersFromMongoDb();
+            let users = await getUsersFromMongoDb(queryParameters.user.toString());
             // Write users as json to response
             _response.write(JSON.stringify(users));
         }
@@ -215,14 +232,20 @@ var Server;
             return 2 /* BadDatabaseProblem */;
         }
     }
+    Promise < string[] >
+        {
+            let, subscriptionCollection: Mongo.Collection = mongoClient.db("App").collection("Subscriptions"),
+            let, subscriptions: Subscription[] = await subscriptionCollection.find({ "subscriber": user }).toArray(),
+            let,
+            subscribedUsers: string[] = subscriptions.map((value) => value.subcsriptionTarget),
+            subscribedUsers, : .push(user),
+            return: subscribedUsers
+        };
     /**
      * Gets all users and their details from the MongoDb
      */
     async function getSubscribedMessagesFromMongoDb(user) {
-        let subscriptionCollection = mongoClient.db("App").collection("Subscriptions");
-        let subscriptions = await subscriptionCollection.find({ "subscriber": user }).toArray();
-        let subscribedUsers = subscriptions.map((value) => value.subcsriptionTarget);
-        subscribedUsers.push(user);
+        let subscribedUsers = await getSubscribedUsers(user);
         // Get all subscribed users from database
         let usersCollection = mongoClient.db("App").collection("Users");
         let users = await usersCollection.find({ "eMail": { $in: subscribedUsers } }).toArray();
@@ -280,17 +303,12 @@ var Server;
     /**
      * Gets all users and their details from the MongoDb
      */
-    async function getUsersFromMongoDb() {
+    async function getUsersFromMongoDb(user) {
+        let subscribedUsers = await getSubscribedUsers(user);
         // Get all users from database
         let userCollection = mongoClient.db("App").collection("Users");
         let userDocuments = await userCollection.find().toArray();
-        let users = [];
-        // Decode each user document to a user object
-        for (const userDocument of userDocuments) {
-            let user = new User(userDocument.eMail, userDocument.name, userDocument.surName, userDocument.semester, userDocument.degreeCourse, userDocument.country);
-            // Add user object to array
-            users.push(user);
-        }
+        let users = userDocuments.map((user) => new ExtendedUser(user.eMail, user.name, user.surName, user.degreeCourse, user.semester, user.country, subscribedUsers.find((su) => su === user.eMail) != undefined));
         // Return users array
         return users;
     }

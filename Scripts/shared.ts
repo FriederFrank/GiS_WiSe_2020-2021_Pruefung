@@ -42,6 +42,34 @@ class User {
   }
 }
 
+class ExtendedUser extends User {
+
+  isSubscribed: boolean;
+
+  /**
+   * Ctor
+   * @param eMail 
+   * @param name 
+   * @param surName 
+   * @param degreeCourse
+   * @param semester 
+   * @param country 
+   */
+  constructor(
+    eMail: string,
+    name: string,
+    surName: string,
+    degreeCourse: string,
+    semester: string,
+    country: string,
+    isSubscribed: boolean
+  ) {
+    super(eMail, name, surName, degreeCourse, semester, country);
+
+    this.isSubscribed = isSubscribed;
+  }
+}
+
 /**
  * Subscription class
  */
@@ -55,8 +83,8 @@ class Subscription {
    * @param subcsriptionTarget 
    */
   constructor(
-      subscriber: string,
-      subcsriptionTarget: string
+    subscriber: string,
+    subcsriptionTarget: string
   ) {
     this.subscriber = subscriber;
     this.subcsriptionTarget = subcsriptionTarget;
@@ -77,11 +105,11 @@ class MessageBase {
    * @param text 
    */
   constructor(
-      userMail: string,
-      text: string
+    userMail: string,
+    text: string
   ) {
-      this.userMail = userMail;
-      this.text = text;
+    this.userMail = userMail;
+    this.text = text;
   }
 }
 
@@ -95,12 +123,12 @@ class Message extends MessageBase {
    * @param message 
    */
   constructor(
-      userMail: string,
-      user: User,
-      message: string
+    userMail: string,
+    user: User,
+    message: string
   ) {
-      super(userMail, message);
-      this.user = user;
+    super(userMail, message);
+    this.user = user;
   }
 }
 

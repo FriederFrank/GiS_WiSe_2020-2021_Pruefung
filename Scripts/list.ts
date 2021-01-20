@@ -163,7 +163,7 @@ async function initializeMessages(): Promise<void> {
         textDiv.setAttribute("class", "message-text");
 
         let nameDiv: HTMLDivElement = document.createElement("div");
-        nameDiv.textContent = message.userMail;
+        nameDiv.textContent = message.user.name + " " + message.user.surName + " <" + message.userMail + ">";
         nameDiv.setAttribute("class", "message-name");
 
         messageDiv.appendChild(textDiv);

@@ -25,6 +25,21 @@ class User {
         this.country = country;
     }
 }
+class ExtendedUser extends User {
+    /**
+     * Ctor
+     * @param eMail
+     * @param name
+     * @param surName
+     * @param degreeCourse
+     * @param semester
+     * @param country
+     */
+    constructor(eMail, name, surName, degreeCourse, semester, country, isSubscribed) {
+        super(eMail, name, surName, degreeCourse, semester, country);
+        this.isSubscribed = isSubscribed;
+    }
+}
 /**
  * Subscription class
  */

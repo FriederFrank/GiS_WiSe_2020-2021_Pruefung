@@ -14,7 +14,7 @@ class User {
     degreeCourse: string;
     semester: string;
     country: string;
-  
+
     /**
      * Ctor
      * @param eMail 
@@ -25,21 +25,49 @@ class User {
      * @param country 
      */
     constructor(
-      eMail: string,
-      name: string,
-      surName: string,
-      degreeCourse: string,
-      semester: string,
-      country: string
+        eMail: string,
+        name: string,
+        surName: string,
+        degreeCourse: string,
+        semester: string,
+        country: string
     ) {
-      this.eMail = eMail;
-      this.name = name;
-      this.surName = surName;
-      this.degreeCourse = degreeCourse;
-      this.semester = semester;
-      this.country = country;
+        this.eMail = eMail;
+        this.name = name;
+        this.surName = surName;
+        this.degreeCourse = degreeCourse;
+        this.semester = semester;
+        this.country = country;
     }
-  }
+}
+
+class ExtendedUser extends User {
+
+    isSubscribed: boolean;
+
+    /**
+     * Ctor
+     * @param eMail 
+     * @param name 
+     * @param surName 
+     * @param degreeCourse
+     * @param semester 
+     * @param country 
+     */
+    constructor(
+        eMail: string,
+        name: string,
+        surName: string,
+        degreeCourse: string,
+        semester: string,
+        country: string,
+        isSubscribed: boolean
+    ) {
+        super(eMail, name, surName, degreeCourse, semester, country);
+
+        this.isSubscribed = isSubscribed;
+    }
+}
 
 /**
  * Subscription class
@@ -207,8 +235,12 @@ export namespace Server {
             // Handle list command         
             _response.setHeader("content-type", "application/json; charset=utf-8");
 
+
+            // Create subscription object from query
+            let queryParameters: ParsedUrlQuery = q.query;
+
             // Get users from database
-            let users: User[] = await getUsersFromMongoDb();
+            let users: ExtendedUser[] = await getUsersFromMongoDb(queryParameters.user.toString());
 
             // Write users as json to response
             _response.write(JSON.stringify(users));
@@ -309,14 +341,22 @@ export namespace Server {
         }
     }
 
-    /**
-     * Gets all users and their details from the MongoDb
-     */
-    async function getSubscribedMessagesFromMongoDb(user: string): Promise<Message[]> {
+    async function getSubscribedUsers(user: string) Promise < string[] >
+    {
         let subscriptionCollection: Mongo.Collection = mongoClient.db("App").collection("Subscriptions");
         let subscriptions: Subscription[] = await subscriptionCollection.find({ "subscriber": user }).toArray();
         let subscribedUsers: string[] = subscriptions.map((value: Subscription) => value.subcsriptionTarget);
         subscribedUsers.push(user);
+
+        return subscribedUsers;
+    }
+
+    /**
+     * Gets all users and their details from the MongoDb
+     */
+    async function getSubscribedMessagesFromMongoDb(user: string): Promise<Message[]> {
+
+        let subscribedUsers = await getSubscribedUsers(user);
 
         // Get all subscribed users from database
         let usersCollection: Mongo.Collection = mongoClient.db("App").collection("Users");
@@ -327,7 +367,7 @@ export namespace Server {
         let messages: MessageBase[] = await messagesCollection.find({ "userMail": { $in: subscribedUsers } }).toArray();
 
         // Decode each user document to a user object
-        let fullMessages: Message[] = messages.map((message: MessageBase) => new Message(message.userMail, users.find((user)=> user.eMail === message.userMail), message.text));
+        let fullMessages: Message[] = messages.map((message: MessageBase) => new Message(message.userMail, users.find((user) => user.eMail === message.userMail), message.text));
 
         // Return users array
         return fullMessages;
@@ -387,29 +427,15 @@ export namespace Server {
     /**
      * Gets all users and their details from the MongoDb
      */
-    async function getUsersFromMongoDb(): Promise<User[]> {
+    async function getUsersFromMongoDb(user: string): Promise<ExtendedUser[]> {
+
+        let subscribedUsers: string[] = await getSubscribedUsers(user);
 
         // Get all users from database
         let userCollection: Mongo.Collection = mongoClient.db("App").collection("Users");
         let userDocuments: User[] = await userCollection.find().toArray();
 
-        let users: User[] = [];
-
-        // Decode each user document to a user object
-        for (const userDocument of userDocuments) {
-
-            let user: User = new User(
-                userDocument.eMail as string,
-                userDocument.name as string,
-                userDocument.surName as string,
-                userDocument.semester as string,
-                userDocument.degreeCourse as string,
-                userDocument.country as string
-            );
-
-            // Add user object to array
-            users.push(user);
-        }
+        let users: ExtendedUser[] = userDocuments.map((user) => new ExtendedUser(user.eMail, user.name, user.surName, user.degreeCourse, user.semester, user.country, subscribedUsers.find((su) => su === user.eMail) != undefined));
 
         // Return users array
         return users;
