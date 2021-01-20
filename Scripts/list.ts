@@ -46,6 +46,7 @@ async function onUserClick(mouseEvent: MouseEvent): Promise<void> {
     serverResult.appendChild(text);
 
     getUsersFromServer();
+    initializeMessages();
 }
 
 

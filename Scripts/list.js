@@ -36,6 +36,7 @@ async function onUserClick(mouseEvent) {
     }
     serverResult.appendChild(text);
     getUsersFromServer();
+    initializeMessages();
 }
 /**
  * Gets the users from the server
