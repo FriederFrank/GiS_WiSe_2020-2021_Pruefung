@@ -20,9 +20,8 @@ class User {
      * @param eMail 
      * @param name 
      * @param surName 
-     * @param adress 
-     * @param city 
-     * @param postcode 
+     * @param degreeCourse
+     * @param semester 
      * @param country 
      */
     constructor(

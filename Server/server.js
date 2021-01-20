@@ -13,18 +13,16 @@ class User {
      * @param eMail
      * @param name
      * @param surName
-     * @param adress
-     * @param city
-     * @param postcode
+     * @param degreeCourse
+     * @param semester
      * @param country
      */
-    constructor(eMail, name, surName, adress, city, postcode, country) {
+    constructor(eMail, name, surName, degreeCourse, semester, country) {
         this.eMail = eMail;
         this.name = name;
         this.surName = surName;
-        this.adress = adress;
-        this.city = city;
-        this.postcode = postcode;
+        this.degreeCourse = degreeCourse;
+        this.semester = semester;
         this.country = country;
     }
 }
@@ -124,7 +122,7 @@ var Server;
             _response.setHeader("content-type", "text/html; charset=utf-8");
             // Create user object from query
             let queryParameters = q.query;
-            let user = new User(queryParameters.eMail, queryParameters.name, queryParameters.surName, queryParameters.adress, queryParameters.city, queryParameters.postcode, queryParameters.country);
+            let user = new User(queryParameters.eMail, queryParameters.name, queryParameters.surName, queryParameters.semester, queryParameters.degreeCourse, queryParameters.country);
             user.password = queryParameters.password;
             // Register user in database
             let registerResult = await addUserToMongoDb(user);
@@ -290,7 +288,7 @@ var Server;
         let users = [];
         // Decode each user document to a user object
         for (const userDocument of userDocuments) {
-            let user = new User(userDocument.eMail, userDocument.name, userDocument.surName, userDocument.adress, userDocument.city, userDocument.postcode, userDocument.country);
+            let user = new User(userDocument.eMail, userDocument.name, userDocument.surName, userDocument.semester, userDocument.degreeCourse, userDocument.country);
             // Add user object to array
             users.push(user);
         }
