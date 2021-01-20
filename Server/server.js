@@ -232,15 +232,13 @@ var Server;
             return 2 /* BadDatabaseProblem */;
         }
     }
-    Promise < string[] >
-        {
-            let, subscriptionCollection: Mongo.Collection = mongoClient.db("App").collection("Subscriptions"),
-            let, subscriptions: Subscription[] = await subscriptionCollection.find({ "subscriber": user }).toArray(),
-            let,
-            subscribedUsers: string[] = subscriptions.map((value) => value.subcsriptionTarget),
-            subscribedUsers, : .push(user),
-            return: subscribedUsers
-        };
+    async function getSubscribedUsers(user) {
+        let subscriptionCollection = mongoClient.db("App").collection("Subscriptions");
+        let subscriptions = await subscriptionCollection.find({ "subscriber": user }).toArray();
+        let subscribedUsers = subscriptions.map((value) => value.subcsriptionTarget);
+        subscribedUsers.push(user);
+        return subscribedUsers;
+    }
     /**
      * Gets all users and their details from the MongoDb
      */

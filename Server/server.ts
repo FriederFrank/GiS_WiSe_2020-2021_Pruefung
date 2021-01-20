@@ -341,8 +341,7 @@ export namespace Server {
         }
     }
 
-    async function getSubscribedUsers(user: string) Promise < string[] >
-    {
+    async function getSubscribedUsers(user: string): Promise<string[]> {
         let subscriptionCollection: Mongo.Collection = mongoClient.db("App").collection("Subscriptions");
         let subscriptions: Subscription[] = await subscriptionCollection.find({ "subscriber": user }).toArray();
         let subscribedUsers: string[] = subscriptions.map((value: Subscription) => value.subcsriptionTarget);
