@@ -202,3 +202,15 @@ h2 {
     color: #2ec3ef;
     margin-top: 0.4em;
 }
+
+.subscribed {
+    background-color: #2ec3ef;
+    color: white;
+    padding: 1em 2em;
+    border: 0.75em solid rgb(255, 255, 255);
+    border-radius: 1.5em;
+    cursor: pointer;
+    font-size: 0.75em;
+    text-decoration: none;
+    box-sizing: border-box;
+}

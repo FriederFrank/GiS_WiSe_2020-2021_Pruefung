@@ -35,19 +35,27 @@ async function onUserClick(mouseEvent) {
         serverResult.removeChild(serverResult.firstChild);
     }
     serverResult.appendChild(text);
+    getUsersFromServer();
 }
 /**
  * Gets the users from the server
  */
 async function getUsersFromServer() {
+    // Get current user
+    let currentUser = localStorage.getItem("currentUser");
+    let query = new URLSearchParams();
+    query.append("user", currentUser);
+    let queryUrl = url + "list" + "?" + query.toString();
     // Fetch data from server
-    let response = await fetch(url + "list");
+    let response = await fetch(queryUrl);
     // Deserialize data to user array
     let users = await response.json();
     // Get the "users" div
     let usersDiv = document.getElementById("users");
-    // Get current user
-    let currentUser = localStorage.getItem("currentUser");
+    // Clear Users for refresh
+    while (usersDiv.hasChildNodes()) {
+        usersDiv.removeChild(usersDiv.firstChild);
+    }
     // For each user
     for (const user of users) {
         if (user.eMail == currentUser) {
@@ -56,9 +64,17 @@ async function getUsersFromServer() {
         let userDiv = document.createElement("div");
         userDiv.id = user.eMail;
         userDiv.setAttribute("class", "user");
+        let userDivClasses = "user";
         let nameDiv = document.createElement("div");
         nameDiv.textContent = user.name + " " + user.surName;
         userDiv.appendChild(nameDiv);
+        if (user.isSubscribed) {
+            let subscribedDiv = document.createElement("div");
+            subscribedDiv.textContent = "Abonniert";
+            userDiv.appendChild(subscribedDiv);
+            userDivClasses += " subscribed";
+        }
+        userDiv.setAttribute("class", userDivClasses);
         userDiv.addEventListener("click", onUserClick);
         // Add user to userDiv
         usersDiv.appendChild(userDiv);
@@ -87,6 +103,7 @@ async function onSendMessageClick() {
         let statusCode = Number.parseInt(responseText);
         // Interpret return value
         if (statusCode == 1 /* Good */) {
+            messageTextArea.value = "";
             text.innerText = "Nachricht erfolgreich verschickt!";
         }
         else if (statusCode == 2 /* BadDatabaseProblem */) {
@@ -98,6 +115,7 @@ async function onSendMessageClick() {
         serverResult.removeChild(serverResult.firstChild);
     }
     serverResult.appendChild(text);
+    initializeMessages();
 }
 async function initializeMessages() {
     let sendMessageButton = document.getElementById("sendmessage");
@@ -114,7 +132,11 @@ async function initializeMessages() {
     let messages = await response.json();
     // Get the "users" div
     let messagesDiv = document.getElementById("messages");
-    // For each user
+    // Clear Users for refresh
+    while (messagesDiv.hasChildNodes()) {
+        messagesDiv.removeChild(messagesDiv.firstChild);
+    }
+    // For each message
     for (const message of messages.reverse()) {
         let messageDiv = document.createElement("div");
         messageDiv.setAttribute("class", "message");

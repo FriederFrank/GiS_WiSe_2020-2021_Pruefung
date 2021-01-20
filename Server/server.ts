@@ -308,7 +308,12 @@ export namespace Server {
 
         if (existingSubscription > 0) {
             // User with email already exists in db
-            return StatusCodes.AlreadySubscribed;
+
+            existingSubscription.array.forEach(subscription => {
+                subscriptions.remove(subscription);
+            });
+
+            return StatusCodes.Good;
         }
         else {
             // Insert subscription in database
