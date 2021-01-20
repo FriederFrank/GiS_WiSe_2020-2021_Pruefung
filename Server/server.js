@@ -205,10 +205,15 @@ var Server;
         let existingSubscription = await subscriptions.countDocuments({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
         if (existingSubscription > 0) {
             // User with email already exists in db
-            existingSubscription.array.forEach(subscription => {
-                subscriptions.remove(subscription);
-            });
-            return 1 /* Good */;
+            let result = subscriptions.remove({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
+            if (result) {
+                // User successfully added
+                return 1 /* Good */;
+            }
+            else {
+                // Database problem
+                return 2 /* BadDatabaseProblem */;
+            }
         }
         else {
             // Insert subscription in database

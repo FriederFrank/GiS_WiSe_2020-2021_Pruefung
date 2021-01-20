@@ -309,11 +309,16 @@ export namespace Server {
         if (existingSubscription > 0) {
             // User with email already exists in db
 
-            existingSubscription.array.forEach(subscription => {
-                subscriptions.remove(subscription);
-            });
+            let result = subscriptions.remove({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
 
-            return StatusCodes.Good;
+            if (result) {
+                // User successfully added
+                return StatusCodes.Good;
+            }
+            else {
+                // Database problem
+                return StatusCodes.BadDatabaseProblem;
+            }
         }
         else {
             // Insert subscription in database
