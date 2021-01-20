@@ -105,6 +105,7 @@ input[type=button]:hover {
     cursor: pointer;
     font-size: 0.75em;
     text-decoration: none;
+    margin-left: 1%;
 }
 
 .button:hover {
@@ -123,7 +124,7 @@ h1 {
     text-decoration: wavy;
     color: #2ec3ef;
     font-size: 1.5em;
-    padding: 1%;
+    padding: 2%;
 }
 
 h2 {
@@ -131,7 +132,7 @@ h2 {
     text-decoration: wavy;
     color: #2ec3ef;
     font-size: 1.5em;
-    padding: 1%;
+    padding: 2%;
 }
 
 .img-header {
@@ -140,11 +141,35 @@ h2 {
 }
 
 .user {
-    margin: 1em;
-    padding: 1em;
+    background-color: #c4c4c4;
+    color: white;
+    padding: 1em 2em;
+    border: 0.75em solid rgb(255, 255, 255);
+    border-radius: 1.5em;
+    cursor: pointer;
+    font-size: 0.75em;
+    text-decoration: none;
+    box-sizing: border-box;
 }
 
 .user:hover {
-    border: solid 1px black;
-    padding: calc(1em - 1px);
+    background-color: #f1f1f1;
+    color: black;
+    text-decoration: none;
+}
+.message{
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 2%
+}
+.button-profil{
+    background-color: #c4c4c4;
+    color: white;
+    padding: 0.4em 2em;
+    border: 0.063em solid #ccc;
+    border-radius: 1em;
+    cursor: pointer;
+    font-size: 0.75em;
+    text-decoration: none;
+    margin-left: 1%;   
 }

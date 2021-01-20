@@ -11,11 +11,10 @@ class User {
     password: string;
     name: string;
     surName: string;
-    adress: string;
-    city: string;
-    postcode: string;
+    degreeCourse: string;
+    semester: string;
     country: string;
-
+  
     /**
      * Ctor
      * @param eMail 
@@ -27,23 +26,21 @@ class User {
      * @param country 
      */
     constructor(
-        eMail: string,
-        name: string,
-        surName: string,
-        adress: string,
-        city: string,
-        postcode: string,
-        country: string
+      eMail: string,
+      name: string,
+      surName: string,
+      degreeCourse: string,
+      semester: string,
+      country: string
     ) {
-        this.eMail = eMail;
-        this.name = name;
-        this.surName = surName;
-        this.adress = adress;
-        this.city = city;
-        this.postcode = postcode;
-        this.country = country;
+      this.eMail = eMail;
+      this.name = name;
+      this.surName = surName;
+      this.degreeCourse = degreeCourse;
+      this.semester = semester;
+      this.country = country;
     }
-}
+  }
 
 /**
  * Subscription class
@@ -195,9 +192,8 @@ export namespace Server {
                 queryParameters.eMail as string,
                 queryParameters.name as string,
                 queryParameters.surName as string,
-                queryParameters.adress as string,
-                queryParameters.city as string,
-                queryParameters.postcode as string,
+                queryParameters.semester as string,
+                queryParameters.degreeCourse as string,
                 queryParameters.country as string
             );
             user.password = queryParameters.password as string;
@@ -408,9 +404,8 @@ export namespace Server {
                 userDocument.eMail as string,
                 userDocument.name as string,
                 userDocument.surName as string,
-                userDocument.adress as string,
-                userDocument.city as string,
-                userDocument.postcode as string,
+                userDocument.semester as string,
+                userDocument.degreeCourse as string,
                 userDocument.country as string
             );
 

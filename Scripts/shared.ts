@@ -12,9 +12,8 @@ class User {
   password: string;
   name: string;
   surName: string;
-  adress: string;
-  city: string;
-  postcode: string;
+  degreeCourse: string;
+  semester: string;
   country: string;
 
   /**
@@ -31,17 +30,15 @@ class User {
     eMail: string,
     name: string,
     surName: string,
-    adress: string,
-    city: string,
-    postcode: string,
+    degreeCourse: string,
+    semester: string,
     country: string
   ) {
     this.eMail = eMail;
     this.name = name;
     this.surName = surName;
-    this.adress = adress;
-    this.city = city;
-    this.postcode = postcode;
+    this.degreeCourse = degreeCourse;
+    this.semester = semester;
     this.country = country;
   }
 }
