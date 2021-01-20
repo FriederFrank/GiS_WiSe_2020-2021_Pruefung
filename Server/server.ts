@@ -309,9 +309,9 @@ export namespace Server {
         if (existingSubscription > 0) {
             // User with email already exists in db
 
-            let result = subscriptions.remove({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
+            let result: Mongo.DeleteWriteOpResultObject = await subscriptions.deleteMany({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
 
-            if (result) {
+            if (result.result.ok) {
                 // User successfully added
                 return StatusCodes.Good;
             }
