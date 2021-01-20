@@ -24,7 +24,7 @@ async function onUserClick(mouseEvent) {
             text.innerText = "User bereits abonniert!";
         }
         else if (statusCode == 1 /* Good */) {
-            text.innerText = "Erfolgreich registriert!";
+            text.innerText = "Erfolgreich abonniert!";
         }
         else if (statusCode == 2 /* BadDatabaseProblem */) {
             text.innerText = "Unbekanntes Datenbank Problem";

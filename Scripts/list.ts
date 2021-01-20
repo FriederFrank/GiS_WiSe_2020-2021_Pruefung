@@ -32,7 +32,7 @@ async function onUserClick(mouseEvent: MouseEvent): Promise<void> {
             text.innerText = "User bereits abonniert!";
         }
         else if (statusCode == StatusCodes.Good) {
-            text.innerText = "Erfolgreich registriert!";
+            text.innerText = "Erfolgreich abonniert!";
         }
         else if (statusCode == StatusCodes.BadDatabaseProblem) {
             text.innerText = "Unbekanntes Datenbank Problem";
