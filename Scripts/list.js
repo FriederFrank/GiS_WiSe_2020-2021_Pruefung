@@ -124,7 +124,6 @@ async function initializeMessages() {
         nameDiv.textContent = message.userMail;
         messageDiv.appendChild(textDiv);
         messageDiv.appendChild(nameDiv);
-        messageDiv.addEventListener("click", onUserClick);
         // Add message to messagesDiv
         messagesDiv.appendChild(messageDiv);
     }
