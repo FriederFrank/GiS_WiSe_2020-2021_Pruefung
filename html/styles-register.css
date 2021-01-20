@@ -23,7 +23,12 @@ body{
   border-top: 1px solid #c4c4c4;
   border-bottom: 1px solid #c4c4c4;
 }
-.Footer { grid-area: Footer; }
+.Footer {
+  grid-area: Footer;
+  text-align: left;
+  font-size: 1em;
+  height: fit-content;
+}
 
 .grid-container *:after {
   position: absolute;
