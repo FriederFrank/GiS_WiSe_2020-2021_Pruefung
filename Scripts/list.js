@@ -120,8 +120,10 @@ async function initializeMessages() {
         messageDiv.setAttribute("class", "message");
         let textDiv = document.createElement("div");
         textDiv.textContent = message.text;
+        textDiv.setAttribute("class", "message-text");
         let nameDiv = document.createElement("div");
         nameDiv.textContent = message.userMail;
+        nameDiv.setAttribute("class", "message-name");
         messageDiv.appendChild(textDiv);
         messageDiv.appendChild(nameDiv);
         // Add message to messagesDiv

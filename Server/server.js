@@ -223,15 +223,14 @@ var Server;
         let subscriptions = await subscriptionCollection.find({ "subscriber": user }).toArray();
         let subscribedUsers = subscriptions.map((value) => value.subcsriptionTarget);
         subscribedUsers.push(user);
-        console.log("SubscribedUsers:");
-        console.log(JSON.stringify(subscribedUsers));
+        // Get all subscribed users from database
+        let usersCollection = mongoClient.db("App").collection("Users");
+        let users = await usersCollection.find({ "eMail": { $in: subscribedUsers } }).toArray();
         // Get all messages from database
         let messagesCollection = mongoClient.db("App").collection("Messages");
         let messages = await messagesCollection.find({ "userMail": { $in: subscribedUsers } }).toArray();
-        console.log("Messages:");
-        console.log(JSON.stringify(messages));
         // Decode each user document to a user object
-        let fullMessages = messages.map((message) => new Message(message.userMail, null, message.text));
+        let fullMessages = messages.map((message) => new Message(message.userMail, users.find((user) => user.eMail === message.userMail), message.text));
         // Return users array
         return fullMessages;
     }

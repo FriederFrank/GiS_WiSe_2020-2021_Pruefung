@@ -318,17 +318,16 @@ export namespace Server {
         let subscribedUsers: string[] = subscriptions.map((value: Subscription) => value.subcsriptionTarget);
         subscribedUsers.push(user);
 
-        console.log("SubscribedUsers:");
-        console.log(JSON.stringify(subscribedUsers));
+        // Get all subscribed users from database
+        let usersCollection: Mongo.Collection = mongoClient.db("App").collection("Users");
+        let users: User[] = await usersCollection.find({ "eMail": { $in: subscribedUsers } }).toArray();
 
         // Get all messages from database
         let messagesCollection: Mongo.Collection = mongoClient.db("App").collection("Messages");
         let messages: MessageBase[] = await messagesCollection.find({ "userMail": { $in: subscribedUsers } }).toArray();
-        console.log("Messages:");
-        console.log(JSON.stringify(messages));
 
         // Decode each user document to a user object
-        let fullMessages: Message[] = messages.map((message: MessageBase) => new Message(message.userMail, null, message.text));
+        let fullMessages: Message[] = messages.map((message: MessageBase) => new Message(message.userMail, users.find((user)=> user.eMail === message.userMail), message.text));
 
         // Return users array
         return fullMessages;
