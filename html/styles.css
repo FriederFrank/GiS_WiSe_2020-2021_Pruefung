@@ -43,7 +43,7 @@ body {
 
 .Footer {
     grid-area: Footer;
-    text-align: left;
+    text-align: right;
     font-size: 1em;
     height: fit-content;
 }
