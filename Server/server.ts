@@ -291,6 +291,43 @@ export namespace Server {
             // Write users as json to response
             _response.write(JSON.stringify(messages));
         }
+        else if (q.pathname == "/user") {
+            // Handle list command         
+            _response.setHeader("content-type", "application/json; charset=utf-8");
+
+            // Create subscription object from query
+            let queryParameters: ParsedUrlQuery = q.query;
+
+            // Get users from database
+            let resultUser: ExtendedUser = await getUserFromMongoDb(queryParameters.user.toString(), queryParameters.requesteduser.toString());
+
+            // Write users as json to response
+            _response.write(JSON.stringify(resultUser));
+        }
+
+        else if (q.pathname == "/edituser") {
+            // Handle register command
+            _response.setHeader("content-type", "text/html; charset=utf-8");
+
+            // Create user object from query
+            let queryParameters: ParsedUrlQuery = q.query;
+
+            let user: User = new User(
+                queryParameters.eMail as string,
+                queryParameters.name as string,
+                queryParameters.surName as string,
+                queryParameters.semester as string,
+                queryParameters.degreeCourse as string,
+                queryParameters.country as string
+            );
+            user.password = queryParameters.password as string;
+
+            // Register user in database
+            let registerResult: StatusCodes = await updateUserToMongoDb(user);
+
+            // Write statuscode to response
+            _response.write(String(registerResult));
+        }
         else {
             // Log unhandled paths
             _response.setHeader("content-type", "text/html; charset=utf-8");
@@ -303,6 +340,13 @@ export namespace Server {
     }
 
     async function subscribeUserToMongoDb(subscription: Subscription): Promise<StatusCodes> {
+
+        if (subscription.subscriber === subscription.subcsriptionTarget) {
+            // Can`t set or remove self subscription.
+            // It is always set implicit
+            return StatusCodes.Good;
+        }
+
         let subscriptions: Mongo.Collection = mongoClient.db("App2").collection("Subscriptions");
         let existingSubscription: number = await subscriptions.countDocuments({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
 
@@ -413,6 +457,28 @@ export namespace Server {
     }
 
     /**
+     * Adds a user to the MongoDb if its email does not exist already
+     * @param user 
+     */
+    async function updateUserToMongoDb(user: User): Promise<StatusCodes> {
+
+        // Check for existing user
+        let users: Mongo.Collection = mongoClient.db("App2").collection("Users");
+
+        // Insert user in database
+        let result: Mongo.UpdateWriteOpResult = await users.updateOne({ "eMail": user.eMail }, user);
+
+        if (result.result.ok) {
+            // User successfully added
+            return StatusCodes.Good;
+        }
+        else {
+            // Database problem
+            return StatusCodes.BadDatabaseProblem;
+        }
+    }
+
+    /**
       * Tests if the login with the given password works by checking the MongoDb
       * @param eMail 
       * @param password 
@@ -450,5 +516,18 @@ export namespace Server {
         return users;
     }
 
+    /**
+     * Gets all userdata for a single user from the MonoDb
+     */
+    async function getUserFromMongoDb(user: string, requestedUser: string): Promise<ExtendedUser> {
+
+        let subscribedUsers: string[] = await getSubscribedUsers(user);
+
+        // Get all users from database
+        let userCollection: Mongo.Collection = mongoClient.db("App2").collection("Users");
+        let mongoDbUser: User = await userCollection.findOne({ "eMail": requestedUser });
+
+        return new ExtendedUser(mongoDbUser.eMail, mongoDbUser.name, mongoDbUser.surName, mongoDbUser.degreeCourse, mongoDbUser.semester, mongoDbUser.country, subscribedUsers.find((su) => su === mongoDbUser.eMail) != undefined);
+    }
 }
 

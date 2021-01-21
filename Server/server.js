@@ -191,6 +191,28 @@ var Server;
             // Write users as json to response
             _response.write(JSON.stringify(messages));
         }
+        else if (q.pathname == "/user") {
+            // Handle list command         
+            _response.setHeader("content-type", "application/json; charset=utf-8");
+            // Create subscription object from query
+            let queryParameters = q.query;
+            // Get users from database
+            let resultUser = await getUserFromMongoDb(queryParameters.user.toString(), queryParameters.requesteduser.toString());
+            // Write users as json to response
+            _response.write(JSON.stringify(resultUser));
+        }
+        else if (q.pathname == "/edituser") {
+            // Handle register command
+            _response.setHeader("content-type", "text/html; charset=utf-8");
+            // Create user object from query
+            let queryParameters = q.query;
+            let user = new User(queryParameters.eMail, queryParameters.name, queryParameters.surName, queryParameters.semester, queryParameters.degreeCourse, queryParameters.country);
+            user.password = queryParameters.password;
+            // Register user in database
+            let registerResult = await updateUserToMongoDb(user);
+            // Write statuscode to response
+            _response.write(String(registerResult));
+        }
         else {
             // Log unhandled paths
             _response.setHeader("content-type", "text/html; charset=utf-8");
@@ -201,6 +223,11 @@ var Server;
         _response.end();
     }
     async function subscribeUserToMongoDb(subscription) {
+        if (subscription.subscriber === subscription.subcsriptionTarget) {
+            // Can`t set or remove self subscription.
+            // It is always set implicit
+            return 1 /* Good */;
+        }
         let subscriptions = mongoClient.db("App2").collection("Subscriptions");
         let existingSubscription = await subscriptions.countDocuments({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
         if (existingSubscription > 0) {
@@ -289,6 +316,24 @@ var Server;
         }
     }
     /**
+     * Adds a user to the MongoDb if its email does not exist already
+     * @param user
+     */
+    async function updateUserToMongoDb(user) {
+        // Check for existing user
+        let users = mongoClient.db("App2").collection("Users");
+        // Insert user in database
+        let result = await users.updateOne({ "eMail": user.eMail }, user);
+        if (result.result.ok) {
+            // User successfully added
+            return 1 /* Good */;
+        }
+        else {
+            // Database problem
+            return 2 /* BadDatabaseProblem */;
+        }
+    }
+    /**
       * Tests if the login with the given password works by checking the MongoDb
       * @param eMail
       * @param password
@@ -317,6 +362,16 @@ var Server;
         let users = userDocuments.map((user) => new ExtendedUser(user.eMail, user.name, user.surName, user.degreeCourse, user.semester, user.country, subscribedUsers.find((su) => su === user.eMail) != undefined));
         // Return users array
         return users;
+    }
+    /**
+     * Gets all userdata for a single user from the MonoDb
+     */
+    async function getUserFromMongoDb(user, requestedUser) {
+        let subscribedUsers = await getSubscribedUsers(user);
+        // Get all users from database
+        let userCollection = mongoClient.db("App2").collection("Users");
+        let mongoDbUser = await userCollection.findOne({ "eMail": requestedUser });
+        return new ExtendedUser(mongoDbUser.eMail, mongoDbUser.name, mongoDbUser.surName, mongoDbUser.degreeCourse, mongoDbUser.semester, mongoDbUser.country, subscribedUsers.find((su) => su === mongoDbUser.eMail) != undefined);
     }
 })(Server = exports.Server || (exports.Server = {}));
 //# sourceMappingURL=server.js.map
