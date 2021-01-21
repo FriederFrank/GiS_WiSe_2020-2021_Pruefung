@@ -321,11 +321,10 @@ export namespace Server {
                 queryParameters.country as string
             );
 
-            if(queryParameters.password)
-            {
+            if (queryParameters.password) {
                 user.password = queryParameters.password as string;
             }
-          
+
             // Register user in database
             let registerResult: StatusCodes = await updateUserToMongoDb(user);
 
@@ -466,26 +465,33 @@ export namespace Server {
      */
     async function updateUserToMongoDb(user: User): Promise<StatusCodes> {
 
-        // Check for existing user
-        let users: Mongo.Collection = mongoClient.db("App2").collection("Users");
+        try {
+            // Check for existing user
+            let users: Mongo.Collection = mongoClient.db("App2").collection("Users");
 
-        if (!user.password) {
-            // load any because users password is not an constructorparamter and not loaded for client calls 
-            let userDocument: any = await users.findOne({ "eMail": user.eMail });
-            user.password = userDocument.password;
+            if (!user.password) {
+                // load any because users password is not an constructorparamter and not loaded for client calls 
+                let userDocument: any = await users.findOne({ "eMail": user.eMail });
+                user.password = userDocument.password;
+            }
+
+            // Insert user in database
+            let result: Mongo.UpdateWriteOpResult = await users.updateOne({ "eMail": user.eMail }, user);
+
+            if (result.result.ok) {
+                // User successfully added
+                return StatusCodes.Good;
+            }
+            else {
+                // Database problem
+                return StatusCodes.BadDatabaseProblem;
+            }
+        }
+        catch (e) {
+            console.log(JSON.stringify(e));
         }
 
-        // Insert user in database
-        let result: Mongo.UpdateWriteOpResult = await users.updateOne({ "eMail": user.eMail }, user);
-
-        if (result.result.ok) {
-            // User successfully added
-            return StatusCodes.Good;
-        }
-        else {
-            // Database problem
-            return StatusCodes.BadDatabaseProblem;
-        }
+        return StatusCodes.BadDatabaseProblem;
     }
 
     /**

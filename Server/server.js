@@ -322,23 +322,29 @@ var Server;
      * @param user
      */
     async function updateUserToMongoDb(user) {
-        // Check for existing user
-        let users = mongoClient.db("App2").collection("Users");
-        if (!user.password) {
-            // load any because users password is not an constructorparamter and not loaded for client calls 
-            let userDocument = await users.findOne({ "eMail": user.eMail });
-            user.password = userDocument.password;
+        try {
+            // Check for existing user
+            let users = mongoClient.db("App2").collection("Users");
+            if (!user.password) {
+                // load any because users password is not an constructorparamter and not loaded for client calls 
+                let userDocument = await users.findOne({ "eMail": user.eMail });
+                user.password = userDocument.password;
+            }
+            // Insert user in database
+            let result = await users.updateOne({ "eMail": user.eMail }, user);
+            if (result.result.ok) {
+                // User successfully added
+                return 1 /* Good */;
+            }
+            else {
+                // Database problem
+                return 2 /* BadDatabaseProblem */;
+            }
         }
-        // Insert user in database
-        let result = await users.updateOne({ "eMail": user.eMail }, user);
-        if (result.result.ok) {
-            // User successfully added
-            return 1 /* Good */;
+        catch (e) {
+            console.log(JSON.stringify(e));
         }
-        else {
-            // Database problem
-            return 2 /* BadDatabaseProblem */;
-        }
+        return 2 /* BadDatabaseProblem */;
     }
     /**
       * Tests if the login with the given password works by checking the MongoDb
