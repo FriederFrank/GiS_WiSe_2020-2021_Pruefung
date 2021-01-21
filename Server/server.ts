@@ -365,7 +365,7 @@ export namespace Server {
      */
     async function getSubscribedMessagesFromMongoDb(user: string): Promise<Message[]> {
 
-        let subscribedUsers = await getSubscribedUsers(user);
+        let subscribedUsers: String[] = await getSubscribedUsers(user);
 
         // Get all subscribed users from database
         let usersCollection: Mongo.Collection = mongoClient.db("App").collection("Users");
