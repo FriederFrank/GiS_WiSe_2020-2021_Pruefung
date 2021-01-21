@@ -331,7 +331,16 @@ var Server;
                 user.password = userDocument.password;
             }
             // Insert user in database
-            let result = await users.updateOne({ "eMail": user.eMail }, user);
+            let result = await users.updateOne({ "eMail": user.eMail }, {
+                $set: {
+                    "name": user.name,
+                    "surName": user.surName,
+                    "degreeCourse": user.degreeCourse,
+                    "semester": user.semester,
+                    "country": user.country,
+                    "password": user.password
+                }
+            });
             if (result.result.ok) {
                 // User successfully added
                 return 1 /* Good */;
