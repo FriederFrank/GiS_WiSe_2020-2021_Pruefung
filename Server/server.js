@@ -207,7 +207,9 @@ var Server;
             // Create user object from query
             let queryParameters = q.query;
             let user = new User(queryParameters.eMail, queryParameters.name, queryParameters.surName, queryParameters.semester, queryParameters.degreeCourse, queryParameters.country);
-            user.password = queryParameters.password;
+            if (queryParameters.password) {
+                user.password = queryParameters.password;
+            }
             // Register user in database
             let registerResult = await updateUserToMongoDb(user);
             // Write statuscode to response
@@ -322,6 +324,11 @@ var Server;
     async function updateUserToMongoDb(user) {
         // Check for existing user
         let users = mongoClient.db("App2").collection("Users");
+        if (!user.password) {
+            // load any because users password is not an constructorparamter and not loaded for client calls 
+            let userDocument = await users.findOne({ "eMail": user.eMail });
+            user.password = userDocument.password;
+        }
         // Insert user in database
         let result = await users.updateOne({ "eMail": user.eMail }, user);
         if (result.result.ok) {

@@ -320,8 +320,12 @@ export namespace Server {
                 queryParameters.degreeCourse as string,
                 queryParameters.country as string
             );
-            user.password = queryParameters.password as string;
 
+            if(queryParameters.password)
+            {
+                user.password = queryParameters.password as string;
+            }
+          
             // Register user in database
             let registerResult: StatusCodes = await updateUserToMongoDb(user);
 
@@ -465,6 +469,12 @@ export namespace Server {
         // Check for existing user
         let users: Mongo.Collection = mongoClient.db("App2").collection("Users");
 
+        if (!user.password) {
+            // load any because users password is not an constructorparamter and not loaded for client calls 
+            let userDocument: any = await users.findOne({ "eMail": user.eMail });
+            user.password = userDocument.password;
+        }
+
         // Insert user in database
         let result: Mongo.UpdateWriteOpResult = await users.updateOne({ "eMail": user.eMail }, user);
 
@@ -505,6 +515,7 @@ export namespace Server {
     async function getUsersFromMongoDb(user: string): Promise<ExtendedUser[]> {
 
         let subscribedUsers: string[] = await getSubscribedUsers(user);
+
 
         // Get all users from database
         let userCollection: Mongo.Collection = mongoClient.db("App2").collection("Users");
