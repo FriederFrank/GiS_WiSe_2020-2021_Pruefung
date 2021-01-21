@@ -87,7 +87,9 @@ async function getUserFromServer(): Promise<void> {
     degreeCourseInput.value = user.degreeCourse
     semesterInput.value = user.semester
     countryInput.value = user.country;
-    passwordInput.value = user.password;
+    if (user.password != undefined) {
+        passwordInput.value = user.password;
+    }
 }
 
 getUserFromServer();

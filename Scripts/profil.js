@@ -71,7 +71,9 @@ async function getUserFromServer() {
     degreeCourseInput.value = user.degreeCourse;
     semesterInput.value = user.semester;
     countryInput.value = user.country;
-    passwordInput.value = user.password;
+    if (user.password != undefined) {
+        passwordInput.value = user.password;
+    }
 }
 getUserFromServer();
 let sendMessageButton = document.getElementById("editProfil");
