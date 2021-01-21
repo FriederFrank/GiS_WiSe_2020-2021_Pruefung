@@ -94,7 +94,7 @@ var Server;
     server.addListener("listening", handleListen);
     server.listen(port);
     // MongoDb connection string
-    let url = "mongodb+srv://gis-wise-ffr:TpNSSTkmaCmPIlz9@cluster0.rnxgu.mongodb.net/App?retryWrites=true&w=majority";
+    let url = "mongodb+srv://gis-wise-ffr:TpNSSTkmaCmPIlz9@cluster0.rnxgu.mongodb.net/App2?retryWrites=true&w=majority";
     // Create a mongo client
     let options;
     let mongoClient = new Mongo.MongoClient(url, options);
