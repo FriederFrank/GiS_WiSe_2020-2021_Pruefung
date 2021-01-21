@@ -219,8 +219,8 @@ export namespace Server {
                 queryParameters.eMail as string,
                 queryParameters.name as string,
                 queryParameters.surName as string,
-                queryParameters.semester as string,
                 queryParameters.degreeCourse as string,
+                queryParameters.semester as string,
                 queryParameters.country as string
             );
             user.password = queryParameters.password as string;
@@ -316,8 +316,8 @@ export namespace Server {
                 queryParameters.eMail as string,
                 queryParameters.name as string,
                 queryParameters.surName as string,
-                queryParameters.semester as string,
                 queryParameters.degreeCourse as string,
+                queryParameters.semester as string,
                 queryParameters.country as string
             );
 

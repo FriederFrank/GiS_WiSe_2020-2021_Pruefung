@@ -137,7 +137,7 @@ var Server;
             _response.setHeader("content-type", "text/html; charset=utf-8");
             // Create user object from query
             let queryParameters = q.query;
-            let user = new User(queryParameters.eMail, queryParameters.name, queryParameters.surName, queryParameters.semester, queryParameters.degreeCourse, queryParameters.country);
+            let user = new User(queryParameters.eMail, queryParameters.name, queryParameters.surName, queryParameters.degreeCourse, queryParameters.semester, queryParameters.country);
             user.password = queryParameters.password;
             // Register user in database
             let registerResult = await addUserToMongoDb(user);
@@ -206,7 +206,7 @@ var Server;
             _response.setHeader("content-type", "text/html; charset=utf-8");
             // Create user object from query
             let queryParameters = q.query;
-            let user = new User(queryParameters.eMail, queryParameters.name, queryParameters.surName, queryParameters.semester, queryParameters.degreeCourse, queryParameters.country);
+            let user = new User(queryParameters.eMail, queryParameters.name, queryParameters.surName, queryParameters.degreeCourse, queryParameters.semester, queryParameters.country);
             if (queryParameters.password) {
                 user.password = queryParameters.password;
             }

@@ -29,11 +29,8 @@ async function onEditProfilClick(mouseEvent) {
         let responseText = await response.text();
         let statusCode = Number.parseInt(responseText);
         // Interpret return value
-        if (statusCode == 5 /* AlreadySubscribed */) {
-            text.innerText = "User bereits abonniert!";
-        }
-        else if (statusCode == 1 /* Good */) {
-            text.innerText = "Erfolgreich abonniert!";
+        if (statusCode == 1 /* Good */) {
+            text.innerText = "Erfolgreich geändert!";
         }
         else if (statusCode == 2 /* BadDatabaseProblem */) {
             text.innerText = "Unbekanntes Datenbank Problem";

@@ -35,11 +35,9 @@ async function onEditProfilClick(mouseEvent: MouseEvent): Promise<void> {
         let statusCode: StatusCodes = Number.parseInt(responseText) as StatusCodes;
 
         // Interpret return value
-        if (statusCode == StatusCodes.AlreadySubscribed) {
-            text.innerText = "User bereits abonniert!";
-        }
-        else if (statusCode == StatusCodes.Good) {
-            text.innerText = "Erfolgreich abonniert!";
+
+        if (statusCode == StatusCodes.Good) {
+            text.innerText = "Erfolgreich geändert!";
         }
         else if (statusCode == StatusCodes.BadDatabaseProblem) {
             text.innerText = "Unbekanntes Datenbank Problem";
