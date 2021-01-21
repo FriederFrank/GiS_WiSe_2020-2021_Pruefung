@@ -303,7 +303,7 @@ export namespace Server {
     }
 
     async function subscribeUserToMongoDb(subscription: Subscription): Promise<StatusCodes> {
-        let subscriptions: Mongo.Collection = mongoClient.db("App").collection("Subscriptions");
+        let subscriptions: Mongo.Collection = mongoClient.db("App2").collection("Subscriptions");
         let existingSubscription: number = await subscriptions.countDocuments({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
 
         if (existingSubscription > 0) {
@@ -337,7 +337,7 @@ export namespace Server {
 
 
     async function sendMessageToMongoDb(message: MessageBase): Promise<StatusCodes> {
-        let messages: Mongo.Collection = mongoClient.db("App").collection("Messages");
+        let messages: Mongo.Collection = mongoClient.db("App2").collection("Messages");
 
         let result: Mongo.InsertOneWriteOpResult<any> = await messages.insertOne(message);
 
@@ -352,7 +352,7 @@ export namespace Server {
     }
 
     async function getSubscribedUsers(user: string): Promise<string[]> {
-        let subscriptionCollection: Mongo.Collection = mongoClient.db("App").collection("Subscriptions");
+        let subscriptionCollection: Mongo.Collection = mongoClient.db("App2").collection("Subscriptions");
         let subscriptions: Subscription[] = await subscriptionCollection.find({ "subscriber": user }).toArray();
         let subscribedUsers: string[] = subscriptions.map((value: Subscription) => value.subcsriptionTarget);
         subscribedUsers.push(user);
@@ -368,11 +368,11 @@ export namespace Server {
         let subscribedUsers: String[] = await getSubscribedUsers(user);
 
         // Get all subscribed users from database
-        let usersCollection: Mongo.Collection = mongoClient.db("App").collection("Users");
+        let usersCollection: Mongo.Collection = mongoClient.db("App2").collection("Users");
         let users: User[] = await usersCollection.find({ "eMail": { $in: subscribedUsers } }).toArray();
 
         // Get all messages from database
-        let messagesCollection: Mongo.Collection = mongoClient.db("App").collection("Messages");
+        let messagesCollection: Mongo.Collection = mongoClient.db("App2").collection("Messages");
         let messages: MessageBase[] = await messagesCollection.find({ "userMail": { $in: subscribedUsers } }).toArray();
 
         // Decode each user document to a user object
@@ -389,7 +389,7 @@ export namespace Server {
     async function addUserToMongoDb(user: User): Promise<StatusCodes> {
 
         // Check for existing user
-        let users: Mongo.Collection = mongoClient.db("App").collection("Users");
+        let users: Mongo.Collection = mongoClient.db("App2").collection("Users");
         let existingUserCount: number = await users.countDocuments({ "eMail": user.eMail });
 
         if (existingUserCount > 0) {
@@ -420,7 +420,7 @@ export namespace Server {
     async function loginUserViaMongoDb(eMail: string, password: string): Promise<StatusCodes> {
 
         // Check if theres an user with the given email and password
-        let users: Mongo.Collection = mongoClient.db("App").collection("Users");
+        let users: Mongo.Collection = mongoClient.db("App2").collection("Users");
         let existingUserCount: number = await users.countDocuments({ "eMail": eMail, "password": password });
 
         if (existingUserCount > 0) {
@@ -441,7 +441,7 @@ export namespace Server {
         let subscribedUsers: string[] = await getSubscribedUsers(user);
 
         // Get all users from database
-        let userCollection: Mongo.Collection = mongoClient.db("App").collection("Users");
+        let userCollection: Mongo.Collection = mongoClient.db("App2").collection("Users");
         let userDocuments: User[] = await userCollection.find().toArray();
 
         let users: ExtendedUser[] = userDocuments.map((user) => new ExtendedUser(user.eMail, user.name, user.surName, user.degreeCourse, user.semester, user.country, subscribedUsers.find((su) => su === user.eMail) != undefined));

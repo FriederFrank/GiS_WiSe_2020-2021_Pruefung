@@ -201,7 +201,7 @@ var Server;
         _response.end();
     }
     async function subscribeUserToMongoDb(subscription) {
-        let subscriptions = mongoClient.db("App").collection("Subscriptions");
+        let subscriptions = mongoClient.db("App2").collection("Subscriptions");
         let existingSubscription = await subscriptions.countDocuments({ "subscriber": subscription.subscriber, "subcsriptionTarget": subscription.subcsriptionTarget });
         if (existingSubscription > 0) {
             // User with email already exists in db
@@ -229,7 +229,7 @@ var Server;
         }
     }
     async function sendMessageToMongoDb(message) {
-        let messages = mongoClient.db("App").collection("Messages");
+        let messages = mongoClient.db("App2").collection("Messages");
         let result = await messages.insertOne(message);
         if (result.insertedCount == 1) {
             // User successfully added
@@ -241,7 +241,7 @@ var Server;
         }
     }
     async function getSubscribedUsers(user) {
-        let subscriptionCollection = mongoClient.db("App").collection("Subscriptions");
+        let subscriptionCollection = mongoClient.db("App2").collection("Subscriptions");
         let subscriptions = await subscriptionCollection.find({ "subscriber": user }).toArray();
         let subscribedUsers = subscriptions.map((value) => value.subcsriptionTarget);
         subscribedUsers.push(user);
@@ -253,10 +253,10 @@ var Server;
     async function getSubscribedMessagesFromMongoDb(user) {
         let subscribedUsers = await getSubscribedUsers(user);
         // Get all subscribed users from database
-        let usersCollection = mongoClient.db("App").collection("Users");
+        let usersCollection = mongoClient.db("App2").collection("Users");
         let users = await usersCollection.find({ "eMail": { $in: subscribedUsers } }).toArray();
         // Get all messages from database
-        let messagesCollection = mongoClient.db("App").collection("Messages");
+        let messagesCollection = mongoClient.db("App2").collection("Messages");
         let messages = await messagesCollection.find({ "userMail": { $in: subscribedUsers } }).toArray();
         // Decode each user document to a user object
         let fullMessages = messages.map((message) => new Message(message.userMail, users.find((user) => user.eMail === message.userMail), message.text));
@@ -269,7 +269,7 @@ var Server;
      */
     async function addUserToMongoDb(user) {
         // Check for existing user
-        let users = mongoClient.db("App").collection("Users");
+        let users = mongoClient.db("App2").collection("Users");
         let existingUserCount = await users.countDocuments({ "eMail": user.eMail });
         if (existingUserCount > 0) {
             // User with email already exists in db
@@ -295,7 +295,7 @@ var Server;
       */
     async function loginUserViaMongoDb(eMail, password) {
         // Check if theres an user with the given email and password
-        let users = mongoClient.db("App").collection("Users");
+        let users = mongoClient.db("App2").collection("Users");
         let existingUserCount = await users.countDocuments({ "eMail": eMail, "password": password });
         if (existingUserCount > 0) {
             // User successfully logged in
@@ -312,7 +312,7 @@ var Server;
     async function getUsersFromMongoDb(user) {
         let subscribedUsers = await getSubscribedUsers(user);
         // Get all users from database
-        let userCollection = mongoClient.db("App").collection("Users");
+        let userCollection = mongoClient.db("App2").collection("Users");
         let userDocuments = await userCollection.find().toArray();
         let users = userDocuments.map((user) => new ExtendedUser(user.eMail, user.name, user.surName, user.degreeCourse, user.semester, user.country, subscribedUsers.find((su) => su === user.eMail) != undefined));
         // Return users array
