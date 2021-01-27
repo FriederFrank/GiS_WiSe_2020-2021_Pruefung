@@ -1,4 +1,4 @@
-async function onEditProfilClick(mouseEvent: MouseEvent): Promise<void> {
+async function onEditProfilClick(): Promise<void> {
 
     let nameInput: HTMLInputElement = document.getElementById("name") as HTMLInputElement;
     let surNameInput: HTMLInputElement = document.getElementById("surName") as HTMLInputElement;

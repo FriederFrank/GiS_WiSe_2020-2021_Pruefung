@@ -1,5 +1,5 @@
 "use strict";
-async function onEditProfilClick(mouseEvent) {
+async function onEditProfilClick() {
     let nameInput = document.getElementById("name");
     let surNameInput = document.getElementById("surName");
     let eMailInput = document.getElementById("eMail");
