@@ -26,7 +26,7 @@ async function login() {
         let statusCode = Number.parseInt(responseText);
         // Interpret return value
         if (statusCode == 4 /* BadWrongPassword */) {
-            text.innerText = "Falsches Passwort!";
+            text.innerText = "E-Mail oder Passwort falsch!";
         }
         else if (statusCode == 1 /* Good */) {
             text.innerText = "Passwort korrekt!";

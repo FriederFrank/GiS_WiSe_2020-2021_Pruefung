@@ -36,7 +36,7 @@ async function login(): Promise<void> {
 
         // Interpret return value
         if (statusCode == StatusCodes.BadWrongPassword) {
-            text.innerText = "Falsches Passwort!";
+            text.innerText = "E-Mail oder Passwort falsch!";
         }
         else if (statusCode == StatusCodes.Good) {
             text.innerText = "Passwort korrekt!";
