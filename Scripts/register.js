@@ -25,7 +25,7 @@ async function register() {
         let statusCode = Number.parseInt(responseText);
         // Interpret return value
         if (statusCode == 3 /* BadEmailExists */) {
-            text.innerText = "E-Mail existiert bereits!";
+            text.innerText = "Benutzer existiert bereits!";
         }
         else if (statusCode == 1 /* Good */) {
             text.innerText = "Erfolgreich registriert!";

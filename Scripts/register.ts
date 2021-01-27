@@ -34,7 +34,7 @@ async function register(): Promise<void> {
 
         // Interpret return value
         if (statusCode == StatusCodes.BadEmailExists) {
-            text.innerText = "E-Mail existiert bereits!";
+            text.innerText = "Benutzer existiert bereits!";
         }
         else if (statusCode == StatusCodes.Good) {
             text.innerText = "Erfolgreich registriert!";
