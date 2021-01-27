@@ -83,9 +83,9 @@ async function getUserFromServer(): Promise<void> {
 
     nameInput.value = user.name;
     surNameInput.value = user.surName;
-    eMailInput.value = user.eMail
-    degreeCourseInput.value = user.degreeCourse
-    semesterInput.value = user.semester
+    eMailInput.value = user.eMail;
+    degreeCourseInput.value = user.degreeCourse;
+    semesterInput.value = user.semester;
     countryInput.value = user.country;
     if (user.password != undefined) {
         passwordInput.value = user.password;
