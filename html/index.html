@@ -2,45 +2,34 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <!-- Added Scripts twice for local usage and heroku -->
-    <script src="/GiS_WiSe_2020-2021_Pruefung/Scripts/shared.js" defer></script>
-    <script src="/GiS_WiSe_2020-2021_Pruefung/Scripts/list.js" defer></script>
-    <script src="/Scripts/shared.js" defer></script>
-    <script src="/Scripts/list.js" defer></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="styles.css" rel="stylesheet">
-
-    <title>Feed</title>
+  <script src="/GiS_WiSe_2020-2021_Pruefung/Scripts/shared.js" defer></script>
+  <script src="/GiS_WiSe_2020-2021_Pruefung/Scripts/login.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="initial-scale=1.0">
+  <link href="styles-login.css" rel="stylesheet">
+  <title>Login</title>
 </head>
 
 <body>
-    <div class="grid-container">
-        <div class="Header">
-            <img src="../Bilder/336.png" class="img-header">
-        </div>
-        <div class="Profil">
-            <a href="profil.html" class="button-profile">Profil</a>
-            <a href="login.html" class="button-profile">Logout</a>
-        </div>
-        <div class="People">
-            <h2>Personen</h2>
-            <div id="users">
-            </div>
-            <div id="serverresult"></div>
-        </div>
-        <div class="Text">
-            <div class="form">
-                <textarea id="message" name="subject" placeholder="Was gibts Neues?"></textarea>
-                <input type="button" value="Fwittern" id="sendmessage">
-            </div>
-        </div>
-        <div class="Feed">
-            <h1>News Feed</h1>
-            <div id="messages">
-            </div>
-        </div>
-        <div class="Footer">
-        </div>
+  <div class="grid-container">
+    <div class="Header">
+      <img src="../Bilder/336.png" class="img-header">
     </div>
+    <div class="Login">
+      <div class="form">
+        <form> 
+          <input type="text" id="eMail" name="eMail" placeholder="E-Mail">
+          <input type="password" id="password" name="password" placeholder="Passwort">
+          <input type="button" value="Login" id="login">
+        </form>
+      </div>
+        <div id="serverresult">
+        </div>
+        <p>Noch keinen Account? Hier gehts zur <a href="register.html">Registrierung</a></p>
+    </div>
+    <div class="Footer"></div>
+  </div>
+
 </body>
+
+</html>

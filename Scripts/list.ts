@@ -86,7 +86,7 @@ async function getUsersFromServer(): Promise<void> {
         let userDiv: HTMLDivElement = document.createElement("div");
         userDiv.id = user.eMail;
         userDiv.setAttribute("class", "user");
-        let userDivClasses = "user";
+        let userDivClasses: string = "user";
 
         let nameDiv: HTMLDivElement = document.createElement("div");
         nameDiv.textContent = user.name + " " + user.surName;
