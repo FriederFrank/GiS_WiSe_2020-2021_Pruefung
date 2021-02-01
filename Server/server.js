@@ -322,37 +322,29 @@ var Server;
      * @param user
      */
     async function updateUserToMongoDb(user) {
-        try {
-            // Check for existing user
-            let users = mongoClient.db("App2").collection("Users");
-            if (!user.password) {
-                // load any because users password is not an constructorparamter and not loaded for client calls 
-                let userDocument = await users.findOne({ "eMail": user.eMail });
-                user.password = userDocument.password;
-            }
-            // Insert user in database
-            let result = await users.updateOne({ "eMail": user.eMail }, {
-                $set: {
-                    "name": user.name,
-                    "surName": user.surName,
-                    "degreeCourse": user.degreeCourse,
-                    "semester": user.semester,
-                    "country": user.country,
-                    "password": user.password
-                }
-            });
-            if (result.result.ok) {
-                // User successfully added
-                return 1 /* Good */;
-            }
-            else {
-                // Database problem
-                return 2 /* BadDatabaseProblem */;
-            }
+        // Check for existing user
+        let users = mongoClient.db("App2").collection("Users");
+        if (!user.password) {
+            // load any because users password is not an constructorparamter and not loaded for client calls 
+            let userDocument = await users.findOne({ "eMail": user.eMail });
+            user.password = userDocument.password;
         }
-        catch (e) {
-            console.log(JSON.stringify(e));
+        // Insert user in database
+        let result = await users.updateOne({ "eMail": user.eMail }, {
+            $set: {
+                "name": user.name,
+                "surName": user.surName,
+                "degreeCourse": user.degreeCourse,
+                "semester": user.semester,
+                "country": user.country,
+                "password": user.password
+            }
+        });
+        if (result.result.ok) {
+            // User successfully added
+            return 1 /* Good */;
         }
+        // Database problem
         return 2 /* BadDatabaseProblem */;
     }
     /**

@@ -465,43 +465,36 @@ export namespace Server {
      */
     async function updateUserToMongoDb(user: User): Promise<StatusCodes> {
 
-        try {
-            // Check for existing user
-            let users: Mongo.Collection = mongoClient.db("App2").collection("Users");
 
-            if (!user.password) {
-                // load any because users password is not an constructorparamter and not loaded for client calls 
-                let userDocument: any = await users.findOne({ "eMail": user.eMail });
-                user.password = userDocument.password;
-            }
+        // Check for existing user
+        let users: Mongo.Collection = mongoClient.db("App2").collection("Users");
 
-            // Insert user in database
-            let result: Mongo.UpdateWriteOpResult = await users.updateOne(
-                { "eMail": user.eMail },
-                {
-                    $set: {
-                        "name": user.name,
-                        "surName": user.surName,
-                        "degreeCourse": user.degreeCourse,
-                        "semester": user.semester,
-                        "country": user.country,
-                        "password": user.password
-                    }
-                });
-
-            if (result.result.ok) {
-                // User successfully added
-                return StatusCodes.Good;
-            }
-            else {
-                // Database problem
-                return StatusCodes.BadDatabaseProblem;
-            }
-        }
-        catch (e) {
-            console.log(JSON.stringify(e));
+        if (!user.password) {
+            // load any because users password is not an constructorparamter and not loaded for client calls 
+            let userDocument: any = await users.findOne({ "eMail": user.eMail });
+            user.password = userDocument.password;
         }
 
+        // Insert user in database
+        let result: Mongo.UpdateWriteOpResult = await users.updateOne(
+            { "eMail": user.eMail },
+            {
+                $set: {
+                    "name": user.name,
+                    "surName": user.surName,
+                    "degreeCourse": user.degreeCourse,
+                    "semester": user.semester,
+                    "country": user.country,
+                    "password": user.password
+                }
+            });
+
+        if (result.result.ok) {
+            // User successfully added
+            return StatusCodes.Good;
+        }
+
+        // Database problem
         return StatusCodes.BadDatabaseProblem;
     }
 
