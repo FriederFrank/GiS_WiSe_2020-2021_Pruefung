@@ -2,8 +2,8 @@
 /**
  * Server url
  */
-//const url: String = "https://gis-wise-2020-2021-pruefung.herokuapp.com/";
-const url = "http://localhost:8100/";
+const url = "https://gis-wise-2020-2021-pruefung.herokuapp.com/";
+//const url: String = "http://localhost:8100/";
 /**
  * User class
  */
