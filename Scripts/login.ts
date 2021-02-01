@@ -44,7 +44,7 @@ async function login(): Promise<void> {
             localStorage.setItem("currentUser", currentUser);
             localStorage.setItem("currentPassword", currentPassword);
 
-            window.location.href = "/GiS_WiSe_2020-2021_Pruefung/html/index.html";
+            window.location.href = "../html/fwitter.html";
         }
     }
 

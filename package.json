@@ -7,9 +7,9 @@
         "@types/mongodb": "^3.6.3",
         "mongodb": "^3.6.3"
     },
-    "devDependencies": {},
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
+        "start-server": "tsc -p server && node Server/server.js",
         "start": "tsc -p Scripts && tsc -p server && node Server/server.js"
     },
     "repository": {
