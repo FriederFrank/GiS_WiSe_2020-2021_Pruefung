@@ -322,6 +322,16 @@ var Server;
      * @param user
      */
     async function updateUserToMongoDb(user) {
+        // Check Data
+        if (!user.eMail || user.eMail.length == 0
+            || !user.name || user.name.length == 0
+            || !user.surName || user.surName.length == 0
+            || !user.country || user.country.length == 0
+            || !user.degreeCourse || user.degreeCourse.length == 0
+            || !user.semester || user.semester.length == 0
+            || !user.password || user.password.length == 0) {
+            return 6 /* BadDataRecived */;
+        }
         // Check for existing user
         let users = mongoClient.db("App2").collection("Users");
         if (!user.password) {

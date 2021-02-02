@@ -24,7 +24,12 @@ async function onUserClick(mouseEvent) {
             text.innerText = "User bereits abonniert!";
         }
         else if (statusCode == 1 /* Good */) {
-            text.innerText = "Erfolgreich abonniert!";
+            if (currentTarget.classList.contains("subscribed")) {
+                text.innerText = "Erfolgreich deabonniert!";
+            }
+            else {
+                text.innerText = "Erfolgreich abonniert!";
+            }
         }
         else if (statusCode == 2 /* BadDatabaseProblem */) {
             text.innerText = "Unbekanntes Datenbank Problem";
@@ -65,7 +70,7 @@ async function getUsersFromServer() {
         let userDiv = document.createElement("div");
         userDiv.id = user.eMail;
         userDiv.setAttribute("class", "user");
-        let userDivClasses = "user";
+        userDiv.classList.add("user");
         let nameDiv = document.createElement("div");
         nameDiv.textContent = user.name + " " + user.surName;
         userDiv.appendChild(nameDiv);
@@ -73,9 +78,8 @@ async function getUsersFromServer() {
             let subscribedDiv = document.createElement("div");
             subscribedDiv.textContent = "Abonniert";
             userDiv.appendChild(subscribedDiv);
-            userDivClasses += " subscribed";
+            userDiv.classList.add("subscribed");
         }
-        userDiv.setAttribute("class", userDivClasses);
         userDiv.addEventListener("click", onUserClick);
         // Add user to userDiv
         usersDiv.appendChild(userDiv);

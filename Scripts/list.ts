@@ -2,7 +2,7 @@
 
 async function onUserClick(mouseEvent: MouseEvent): Promise<void> {
 
-    let currentTarget: Element = mouseEvent.currentTarget as Element;
+    let currentTarget: Element = mouseEvent.currentTarget as HTMLElement;
 
     // Get Current User from LocalStorage
     let currentUser: string = localStorage.getItem("currentUser");
@@ -32,7 +32,11 @@ async function onUserClick(mouseEvent: MouseEvent): Promise<void> {
             text.innerText = "User bereits abonniert!";
         }
         else if (statusCode == StatusCodes.Good) {
-            text.innerText = "Erfolgreich abonniert!";
+            if (currentTarget.classList.contains("subscribed")) {
+                text.innerText = "Erfolgreich deabonniert!";
+            } else {
+                text.innerText = "Erfolgreich abonniert!";
+            }
         }
         else if (statusCode == StatusCodes.BadDatabaseProblem) {
             text.innerText = "Unbekanntes Datenbank Problem";
@@ -86,7 +90,7 @@ async function getUsersFromServer(): Promise<void> {
         let userDiv: HTMLDivElement = document.createElement("div");
         userDiv.id = user.eMail;
         userDiv.setAttribute("class", "user");
-        let userDivClasses: string = "user";
+        userDiv.classList.add("user");
 
         let nameDiv: HTMLDivElement = document.createElement("div");
         nameDiv.textContent = user.name + " " + user.surName;
@@ -96,10 +100,9 @@ async function getUsersFromServer(): Promise<void> {
             let subscribedDiv: HTMLDivElement = document.createElement("div");
             subscribedDiv.textContent = "Abonniert";
             userDiv.appendChild(subscribedDiv);
-            userDivClasses += " subscribed";
+            userDiv.classList.add("subscribed");
         }
 
-        userDiv.setAttribute("class", userDivClasses);
         userDiv.addEventListener("click", onUserClick);
 
         // Add user to userDiv
