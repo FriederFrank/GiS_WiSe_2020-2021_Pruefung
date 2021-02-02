@@ -219,7 +219,7 @@ h2 {
     height: 2.5em;
     position: fixed;
     bottom: 1em;
-    right: 32em;
+    right: 1em;
     Border-radius: 6em;
 }
 
@@ -227,6 +227,6 @@ h2 {
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
     border-radius: 6em;
     bottom: 1.2em;
-    right: 32em;
+    right: 1em;
     box-shadow: 0 10px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
 }
