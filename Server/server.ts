@@ -326,7 +326,7 @@ export namespace Server {
             }
 
             // Update user in database (password is optional)
-            let registerResult: StatusCodes = await updateUserToMongoDb(user, false);
+            let registerResult: StatusCodes = await updateUserToMongoDb(user);
 
             // Write statuscode to response
             _response.write(String(registerResult));
