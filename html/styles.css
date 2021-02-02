@@ -218,7 +218,6 @@ h2 {
 .button-back {
     height: 2.5em;
     position: fixed;
-    border: 1px solid #f6a454;
     bottom: 1em;
     right: 1em;
     Border-radius: 6em;
@@ -226,7 +225,6 @@ h2 {
 
 .button-back:hover {
     transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-    border: 1px solid #f6a454;
     border-radius: 6em;
     bottom: 1.2em;
     right: 1em;

@@ -206,13 +206,6 @@ async function initializeMessages(): Promise<void> {
     }
 }
 
-function checkCurrentUser()
-{
-    if (localStorage.getItem("currentUser") == null || localStorage.getItem("currentPassword") == null) {
-        window.location.href = "../html/index.html";
-    }
-}
-
 checkCurrentUser();
 getUsersFromServer();
 initializeMessages();

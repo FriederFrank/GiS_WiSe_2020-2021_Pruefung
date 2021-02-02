@@ -81,4 +81,9 @@ class Message extends MessageBase {
         this.user = user;
     }
 }
+function checkCurrentUser() {
+    if (localStorage.getItem("currentUser") == null || localStorage.getItem("currentPassword") == null) {
+        window.location.href = "../html/index.html";
+    }
+}
 //# sourceMappingURL=shared.js.map

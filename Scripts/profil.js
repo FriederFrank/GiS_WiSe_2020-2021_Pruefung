@@ -75,6 +75,7 @@ async function getUserFromServer() {
         passwordInput.value = user.password;
     }
 }
+checkCurrentUser();
 getUserFromServer();
 let sendMessageButton = document.getElementById("editProfil");
 sendMessageButton.addEventListener("click", onEditProfilClick);

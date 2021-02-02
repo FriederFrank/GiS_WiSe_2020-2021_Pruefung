@@ -92,6 +92,7 @@ async function getUserFromServer(): Promise<void> {
     }
 }
 
+checkCurrentUser();
 getUserFromServer();
 
 let sendMessageButton: HTMLElement = document.getElementById("editProfil");

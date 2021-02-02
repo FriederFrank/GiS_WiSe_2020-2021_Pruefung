@@ -142,3 +142,12 @@ const enum StatusCodes {
   BadWrongPassword = 4,
   AlreadySubscribed = 5
 }
+
+
+
+function checkCurrentUser(): void {
+    
+  if (localStorage.getItem("currentUser") == null || localStorage.getItem("currentPassword") == null) {
+      window.location.href = "../html/index.html";
+  }
+}
