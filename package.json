@@ -9,8 +9,8 @@
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start-server": "tsc -p server && node Server/server.js",
-        "start": "tsc -p Scripts && tsc -p server && node Server/server.js"
+        "create-scripts": "tsc -p server && tsc -p Scripts",
+        "start": "node Server/server.js"
     },
     "repository": {
         "type": "git",
