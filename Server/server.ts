@@ -325,8 +325,8 @@ export namespace Server {
                 user.password = queryParameters.password as string;
             }
 
-            // Register user in database
-            let registerResult: StatusCodes = await updateUserToMongoDb(user);
+            // Update user in database (password is optional)
+            let registerResult: StatusCodes = await updateUserToMongoDb(user, false);
 
             // Write statuscode to response
             _response.write(String(registerResult));
@@ -435,6 +435,18 @@ export namespace Server {
      */
     async function addUserToMongoDb(user: User): Promise<StatusCodes> {
 
+        // Check Data
+        if (!user.eMail || user.eMail.length == 0
+            || !user.name || user.name.length == 0
+            || !user.surName || user.surName.length == 0
+            || !user.country || user.country.length == 0
+            || !user.degreeCourse || user.degreeCourse.length == 0
+            || !user.semester || user.semester.length == 0
+            || !user.password || user.password.length == 0) {
+            return StatusCodes.BadDataRecived;
+        }
+
+
         // Check for existing user
         let users: Mongo.Collection = mongoClient.db("App2").collection("Users");
         let existingUserCount: number = await users.countDocuments({ "eMail": user.eMail });
@@ -471,8 +483,7 @@ export namespace Server {
             || !user.surName || user.surName.length == 0
             || !user.country || user.country.length == 0
             || !user.degreeCourse || user.degreeCourse.length == 0
-            || !user.semester || user.semester.length == 0
-            || !user.password || user.password.length == 0) {
+            || !user.semester || user.semester.length == 0) {
             return StatusCodes.BadDataRecived;
         }
 
