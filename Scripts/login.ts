@@ -58,7 +58,7 @@ async function login(): Promise<void> {
     oldLoginResultText = text;
 }
 
-function resetCurrentUser() {
+function resetCurrentUser(): void {
     localStorage.removeItem("currentUser");
     localStorage.removeItem("currentPassword");
 }
