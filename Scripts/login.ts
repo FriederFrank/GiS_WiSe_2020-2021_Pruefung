@@ -8,7 +8,6 @@ let oldLoginResultText: HTMLParagraphElement;
 /**
  * Login the user
  */
-
 async function login(): Promise<void> {
     
     // Get the form content and prepare the http request
