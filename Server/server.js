@@ -124,7 +124,7 @@ var Server;
         console.log(q.pathname);
         console.log(q.search);
         if (q.pathname == "/login") {
-            // Handle login command     
+            // Handle login command
             _response.setHeader("content-type", "text/html; charset=utf-8");
             let queryParameters = q.query;
             // Login user 
@@ -353,6 +353,9 @@ var Server;
       * @param password
       */
     async function loginUserViaMongoDb(eMail, password) {
+        if (!eMail || eMail.length == 0 || !password || password.length == 0) {
+            return 6 /* BadDataRecived */;
+        }
         // Check if theres an user with the given email and password
         let users = mongoClient.db("App2").collection("Users");
         let existingUserCount = await users.countDocuments({ "eMail": eMail, "password": password });

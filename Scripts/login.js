@@ -45,4 +45,9 @@ async function login() {
     }
     oldLoginResultText = text;
 }
+function resetCurrentUser() {
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("currentPassword");
+}
+resetCurrentUser();
 //# sourceMappingURL=login.js.map

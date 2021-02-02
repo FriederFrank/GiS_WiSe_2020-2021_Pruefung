@@ -198,7 +198,7 @@ export namespace Server {
 
 
         if (q.pathname == "/login") {
-            // Handle login command     
+            // Handle login command
             _response.setHeader("content-type", "text/html; charset=utf-8");
             let queryParameters: ParsedUrlQuery = q.query;
 
@@ -504,6 +504,10 @@ export namespace Server {
       * @param password 
       */
     async function loginUserViaMongoDb(eMail: string, password: string): Promise<StatusCodes> {
+
+        if (!eMail || eMail.length == 0 || !password || password.length == 0) {
+            return StatusCodes.BadDataRecived;
+        }
 
         // Check if theres an user with the given email and password
         let users: Mongo.Collection = mongoClient.db("App2").collection("Users");

@@ -153,6 +153,12 @@ async function initializeMessages() {
         messagesDiv.appendChild(messageDiv);
     }
 }
+function checkCurrentUser() {
+    if (localStorage.getItem("currentUser") == null || localStorage.getItem("currentPassword") == null) {
+        window.location.href = "../html/index.html";
+    }
+}
+checkCurrentUser();
 getUsersFromServer();
 initializeMessages();
 //# sourceMappingURL=list.js.map
